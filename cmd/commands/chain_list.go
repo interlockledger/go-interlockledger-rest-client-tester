@@ -38,20 +38,17 @@ import (
 
 // testCmd represents the test command
 var chainListCmd = &cobra.Command{
-	Use:   "chain_list",
+	Use:   "list",
 	Short: "List the chains on this node.",
-	RunE:  runChainList,
-}
-
-func runChainList(cmd *cobra.Command, args []string) error {
-
-	client, err := createAPIClient()
-	chains, _, err := client.ChainApi.ChainsList(nil)
-	if err != nil {
-		return fmt.Errorf("Unable to list the chains: %w\n", err)
-	}
-	for _, c := range chains {
-		printAsJSON(c)
-	}
-	return nil
+	RunE: func(cmd *cobra.Command, args []string) error {
+		client, err := createAPIClient()
+		chains, _, err := client.ChainApi.ChainsList(nil)
+		if err != nil {
+			return fmt.Errorf("Unable to list the chains: %w\n", err)
+		}
+		for _, c := range chains {
+			printAsJSON(c)
+		}
+		return nil
+	},
 }

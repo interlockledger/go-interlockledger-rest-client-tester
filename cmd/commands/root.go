@@ -37,6 +37,39 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type rootCmdFlagsType struct {
+	Chain string // Chain ID
+	Id    int64  // Id
+}
+
+func (f *rootCmdFlagsType) RequireChainId() error {
+	if f.Chain == "" {
+		return fmt.Errorf("chain id is missing.")
+	} else {
+		return nil
+	}
+}
+
+func (f *rootCmdFlagsType) RequireId() error {
+	if f.Id == -1 {
+		return fmt.Errorf("id is required.")
+	} else {
+		return nil
+	}
+}
+
+var rootCmdFlags rootCmdFlagsType
+
+func init() {
+	rootCmd.AddCommand(chainRootCmd)
+	rootCmd.AddCommand(jsonRootCmd)
+	rootCmd.AddCommand(nodeRootCmd)
+
+	jsonAddCmd.Flags().StringVarP(&rootCmdFlags.Chain, "chain", "c", "", "The ID of the chain. It may be required by some commands.")
+	jsonAddCmd.Flags().Int64VarP(&rootCmdFlags.Id, "id", "i", int64(-1), "The ID of the document. It may be required by some commands.")
+
+}
+
 var (
 	// Used for flags.
 	rootCmd = &cobra.Command{

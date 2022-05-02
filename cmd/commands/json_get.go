@@ -36,37 +36,25 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var jsonGetCmdParam = struct {
-	Chain string
-	Id    int64
-}{}
-
 // testCmd represents the test command
 var jsonGetCmd = &cobra.Command{
-	Use:   "json_get",
-	Short: "Adds a dummy JSON into the given chain",
-	RunE:  runJsonGet,
-}
+	Use:   "get",
+	Short: "Get a JSON into the given chain",
+	Long:  "Get a JSON into the given chain. It requires the chain and id.",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := rootCmdFlags.RequireChainId(); err != nil {
+			return err
+		}
+		if err := rootCmdFlags.RequireId(); err != nil {
+			return err
+		}
 
-func init() {
-	jsonGetCmd.Flags().StringVarP(&jsonGetCmdParam.Chain, "chain", "c", "", "The ID of the chain.")
-	jsonGetCmd.Flags().Int64VarP(&jsonGetCmdParam.Id, "id", "i", int64(-1), "The ID of the document.")
-}
-
-func runJsonGet(cmd *cobra.Command, args []string) error {
-
-	if jsonGetCmdParam.Chain == "" {
-		return fmt.Errorf("chain is required.")
-	}
-	if jsonGetCmdParam.Id == -1 {
-		return fmt.Errorf("document id is required.")
-	}
-
-	client, err := createAPIClient()
-	ret, _, err := client.JsonDocumentApi.JsonDocumentsGet(nil, jsonGetCmdParam.Chain, jsonGetCmdParam.Id)
-	if err != nil {
-		return fmt.Errorf("Unable to get the json document: %w\n", err)
-	}
-	printAsJSON(ret)
-	return nil
+		client, err := createAPIClient()
+		ret, _, err := client.JsonDocumentApi.JsonDocumentsGet(nil, rootCmdFlags.Chain, rootCmdFlags.Id)
+		if err != nil {
+			return fmt.Errorf("Unable to get the json document: %w\n", err)
+		}
+		printAsJSON(ret)
+		return nil
+	},
 }

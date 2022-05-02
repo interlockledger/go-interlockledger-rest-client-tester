@@ -31,28 +31,16 @@
 package commands
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
 // testCmd represents the test command
-var jsonAddCmd = &cobra.Command{
-	Use:   "add",
-	Short: "Adds a dummy JSON into the given chain.",
-	Long:  "Adds a dummy JSON into the given chain. It requires the chain.",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := rootCmdFlags.RequireChainId(); err != nil {
-			return err
-		}
+var jsonRootCmd = &cobra.Command{
+	Use:   "json",
+	Short: "Calls JSON document API.",
+}
 
-		client, err := createAPIClient()
-		dummy := map[string]any{"a": "b"}
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAdd(nil, rootCmdFlags.Chain, dummy)
-		if err != nil {
-			return fmt.Errorf("Unable add the dummy JSON document: %w\n", err)
-		}
-		printAsJSON(ret)
-		return nil
-	},
+func init() {
+	jsonRootCmd.AddCommand(jsonAddCmd)
+	jsonRootCmd.AddCommand(jsonGetCmd)
 }

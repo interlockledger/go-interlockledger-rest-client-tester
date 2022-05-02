@@ -38,18 +38,15 @@ import (
 
 // testCmd represents the test command
 var nodeVersionCmd = &cobra.Command{
-	Use:   "node_version",
+	Use:   "get",
 	Short: "Get the version of the server.",
-	RunE:  runNodeVersion,
-}
-
-func runNodeVersion(cmd *cobra.Command, args []string) error {
-
-	client, err := createAPIClient()
-	version, _, err := client.NodeApi.ApiVersion(nil)
-	if err != nil {
-		return fmt.Errorf("Unable to query the node's version: %w\n", err)
-	}
-	fmt.Printf("The server's version is %s\n", version)
-	return nil
+	RunE: func(cmd *cobra.Command, args []string) error {
+		client, err := createAPIClient()
+		version, _, err := client.NodeApi.ApiVersion(nil)
+		if err != nil {
+			return fmt.Errorf("Unable to query the node's version: %w\n", err)
+		}
+		fmt.Printf("The server's version is %s\n", version)
+		return nil
+	},
 }
