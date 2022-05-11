@@ -28,38 +28,18 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package commands
+package chain
 
 import (
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/chain"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/json"
-
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/node"
 	"github.com/spf13/cobra"
 )
 
-func init() {
-
-	rootCmd.AddCommand(chain.ChainRootCmd)
-	rootCmd.AddCommand(json.JSONRootCmd)
-	rootCmd.AddCommand(node.NodeRootCmd)
-	rootCmd.PersistentFlags().StringVar(&flags.Flags.ConfigFile, "config", "config.json", "The configuration file.")
-	rootCmd.PersistentFlags().StringVarP(&flags.Flags.Chain, "chain", "c", "", "The ID of the chain. It may be required by some commands.")
-	rootCmd.PersistentFlags().Int64VarP(&flags.Flags.Id, "id", "i", int64(-1), "The ID of the document. It may be required by some commands.")
+// testCmd represents the test command
+var ChainRootCmd = &cobra.Command{
+	Use:   "chain",
+	Short: "Execute chain related APIs calls.",
 }
 
-var (
-	// Used for flags.
-	rootCmd = &cobra.Command{
-		Use:   "IL2 Go REST Client Tester",
-		Short: "Test program for the IL2 Go REST Client",
-		Long:  "This is a very simple test program for the IL2 Go REST Client.",
-		//RunE: runOTP,
-	}
-)
-
-// Execute executes the root command.
-func Execute() error {
-	return rootCmd.Execute()
+func init() {
+	ChainRootCmd.AddCommand(chainListCmd)
 }

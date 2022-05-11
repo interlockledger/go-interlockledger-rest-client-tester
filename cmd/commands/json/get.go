@@ -28,51 +28,35 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// This package contains the implementation of the commands used to test each
-// IL2 API.
-package commands
+package json
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
 
-	"github.com/interlockledger/go-interlockledger-rest-client/pkg/client"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
+	"github.com/spf13/cobra"
 )
 
-/*
-Configures and creates the APIClient.
-*/
-func createAPIClient() (*client.APIClient, error) {
+// testCmd represents the test command
+var jsonGetCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Get a JSON into the given chain",
+	Long:  "Get a JSON into the given chain. It requires the chain and id.",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireChainId(); err != nil {
+			return err
+		}
+		if err := flags.Flags.RequireId(); err != nil {
+			return err
+		}
 
-	// Load the configuration
-	var cfg map[string]string
-	b, err := os.ReadFile("config.json")
-	if err != nil {
-		return nil, fmt.Errorf("Unable to load the configuration file: %w\n", err)
-	}
-	err = json.Unmarshal(b, &cfg)
-	if err != nil {
-		return nil, fmt.Errorf("Unable to parse the configuration file: %w\n", err)
-	}
-
-	// Creates a new configuration.
-	configuration := client.NewConfiguration()
-	// Set the name of the server here
-	configuration.BasePath = cfg["basePath"]
-	// Sets the required client certificate.
-	err = configuration.SetClientCertificate("cert.pem", "key.pem")
-	if err != nil {
-		return nil, fmt.Errorf("Unable to load the client certificate: %w\n", err)
-	}
-	// Create the new client
-	return client.NewAPIClient(configuration), nil
-}
-
-func printAsJSON(o any) {
-	bin, err := json.MarshalIndent(o, "", "  ")
-	if err != nil {
-		panic(fmt.Sprintf("Unable to convert the object into a JSON string: %v", err))
-	}
-	fmt.Println(string(bin))
+		client, err := core.CreateAPIClient(flags.Flags.ConfigFile)
+		ret, _, err := client.JsonDocumentApi.JsonDocumentsGet(nil, flags.Flags.Chain, flags.Flags.Id)
+		if err != nil {
+			return fmt.Errorf("Unable to get the json document: %w\n", err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }

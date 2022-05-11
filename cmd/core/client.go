@@ -28,25 +28,51 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package commands
+// This package contains the implementation of the commands used to test each
+// IL2 API.
+package core
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 
-	"github.com/spf13/cobra"
+	"github.com/interlockledger/go-interlockledger-rest-client/client"
 )
 
-// testCmd represents the test command
-var nodeVersionCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get the version of the server.",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := createAPIClient()
-		version, _, err := client.NodeApi.ApiVersion(nil)
-		if err != nil {
-			return fmt.Errorf("Unable to query the node's version: %w\n", err)
-		}
-		fmt.Printf("The server's version is %s\n", version)
-		return nil
-	},
+/*
+Configures and creates the APIClient.
+*/
+func CreateAPIClient(configFile string) (*client.APIClient, error) {
+
+	// Load the configuration
+	var cfg map[string]string
+	b, err := os.ReadFile(configFile)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to load the configuration file: %w\n", err)
+	}
+	err = json.Unmarshal(b, &cfg)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to parse the configuration file: %w\n", err)
+	}
+
+	// Creates a new configuration.
+	configuration := client.NewConfiguration()
+	// Set the name of the server here
+	configuration.BasePath = cfg["basePath"]
+	// Sets the required client certificate.
+	err = configuration.SetClientCertificate("cert.pem", "key.pem")
+	if err != nil {
+		return nil, fmt.Errorf("Unable to load the client certificate: %w\n", err)
+	}
+	// Create the new client
+	return client.NewAPIClient(configuration), nil
+}
+
+func PrintAsJSON(o any) {
+	bin, err := json.MarshalIndent(o, "", "  ")
+	if err != nil {
+		panic(fmt.Sprintf("Unable to convert the object into a JSON string: %v", err))
+	}
+	fmt.Println(string(bin))
 }

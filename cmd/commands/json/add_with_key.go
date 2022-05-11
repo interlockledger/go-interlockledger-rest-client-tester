@@ -28,18 +28,45 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package commands
+package json
 
 import (
+	"fmt"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 	"github.com/spf13/cobra"
 )
 
+var jsonAddWithKeyCmdFlags = struct {
+	certFile string
+	keyId    string
+}{}
+
 // testCmd represents the test command
-var chainRootCmd = &cobra.Command{
-	Use:   "chain",
-	Short: "Chain APIs",
+var jsonAddWithKeyCmd = &cobra.Command{
+	Use:   "add-with-key",
+	Short: "Adds a dummy JSON into the given chain using a test key.",
+	Long:  "Adds a dummy JSON into the given chain using a test key. It requires the chain.",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireChainId(); err != nil {
+			return err
+		}
+
+		client, err := core.CreateAPIClient(flags.Flags.ConfigFile)
+		dummy := map[string]any{"a": "b"}
+		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithKey(nil, flags.Flags.Chain,
+			"", "testKey",
+			dummy)
+		if err != nil {
+			return fmt.Errorf("Unable add the dummy JSON document: %w\n", err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
 
 func init() {
-	chainRootCmd.AddCommand(chainListCmd)
+	jsonAddWithKeyCmd.Flags().StringVarP(&flags.Flags.Chain, "chain", "c", "", "The ID of the chain. It may be required by some commands.")
+	jsonAddWithKeyCmd.Flags().Int64VarP(&flags.Flags.Id, "id", "i", int64(-1), "The ID of the document. It may be required by some commands.")
 }

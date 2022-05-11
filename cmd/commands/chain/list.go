@@ -28,33 +28,30 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package commands
+package chain
 
 import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
 // testCmd represents the test command
-var jsonGetCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get a JSON into the given chain",
-	Long:  "Get a JSON into the given chain. It requires the chain and id.",
+var chainListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List the chains on this node.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := rootCmdFlags.RequireChainId(); err != nil {
-			return err
-		}
-		if err := rootCmdFlags.RequireId(); err != nil {
-			return err
-		}
-
-		client, err := createAPIClient()
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsGet(nil, rootCmdFlags.Chain, rootCmdFlags.Id)
+		client, err := core.CreateAPIClient(flags.Flags.ConfigFile)
+		chains, _, err := client.ChainApi.ChainsList(nil)
 		if err != nil {
-			return fmt.Errorf("Unable to get the json document: %w\n", err)
+			return fmt.Errorf("Unable to list the chains: %w\n", err)
 		}
-		printAsJSON(ret)
+		for _, c := range chains {
+			core.PrintAsJSON(c)
+		}
 		return nil
 	},
 }

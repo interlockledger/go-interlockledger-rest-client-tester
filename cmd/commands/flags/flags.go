@@ -28,19 +28,30 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package commands
+package flags
 
-import (
-	"github.com/spf13/cobra"
-)
+import "fmt"
 
-// testCmd represents the test command
-var jsonRootCmd = &cobra.Command{
-	Use:   "json",
-	Short: "Calls JSON document API.",
+type GlobalFlags struct {
+	ConfigFile string // Configuration file
+	Chain      string // Chain ID
+	Id         int64  // Id
 }
 
-func init() {
-	jsonRootCmd.AddCommand(jsonAddCmd)
-	jsonRootCmd.AddCommand(jsonGetCmd)
+func (f *GlobalFlags) RequireChainId() error {
+	if f.Chain == "" {
+		return fmt.Errorf("chain id is missing.")
+	} else {
+		return nil
+	}
 }
+
+func (f *GlobalFlags) RequireId() error {
+	if f.Id == -1 {
+		return fmt.Errorf("id is required.")
+	} else {
+		return nil
+	}
+}
+
+var Flags GlobalFlags

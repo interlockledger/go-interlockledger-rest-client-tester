@@ -28,27 +28,28 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package commands
+package node
 
 import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
 // testCmd represents the test command
-var chainListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List the chains on this node.",
+var nodeVersionCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Get the version of the server.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := createAPIClient()
-		chains, _, err := client.ChainApi.ChainsList(nil)
+		client, err := core.CreateAPIClient(flags.Flags.ConfigFile)
+		version, _, err := client.NodeApi.ApiVersion(nil)
 		if err != nil {
-			return fmt.Errorf("Unable to list the chains: %w\n", err)
+			return fmt.Errorf("Unable to query the node's version: %w\n", err)
 		}
-		for _, c := range chains {
-			printAsJSON(c)
-		}
+		fmt.Printf("The server's version is %s\n", version)
 		return nil
 	},
 }

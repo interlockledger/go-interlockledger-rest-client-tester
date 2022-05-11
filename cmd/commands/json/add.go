@@ -28,18 +28,36 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package commands
+package json
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
 // testCmd represents the test command
-var nodeRootCmd = &cobra.Command{
-	Use:   "node",
-	Short: "Node APIs.",
-}
+var jsonAddCmd = &cobra.Command{
+	Use:   "add",
+	Short: "Adds a dummy JSON into the given chain.",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireChainId(); err != nil {
+			return err
+		}
 
-func init() {
-	nodeRootCmd.AddCommand(nodeVersionCmd)
+		client, err := core.CreateAPIClient(flags.Flags.ConfigFile)
+		dummy, err := loadJSON()
+		if err != nil {
+			return fmt.Errorf("Unable to load the JSON document: %w\n", err)
+		}
+		ret, _, err := client.JsonDocumentApi.JsonDocumentsAdd(nil, flags.Flags.Chain, dummy)
+		if err != nil {
+			return fmt.Errorf("Unable add the dummy JSON document: %w\n", err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }

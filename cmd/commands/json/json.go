@@ -28,31 +28,47 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package commands
+package json
 
 import (
-	"fmt"
+	stdjson "encoding/json"
+	"os"
 
 	"github.com/spf13/cobra"
 )
 
-// testCmd represents the test command
-var jsonAddCmd = &cobra.Command{
-	Use:   "add",
-	Short: "Adds a dummy JSON into the given chain.",
-	Long:  "Adds a dummy JSON into the given chain. It requires the chain.",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := rootCmdFlags.RequireChainId(); err != nil {
-			return err
-		}
+var jsonFlags = struct {
+	jsonFile string
+}{}
 
-		client, err := createAPIClient()
-		dummy := map[string]any{"a": "b"}
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAdd(nil, rootCmdFlags.Chain, dummy)
-		if err != nil {
-			return fmt.Errorf("Unable add the dummy JSON document: %w\n", err)
-		}
-		printAsJSON(ret)
-		return nil
-	},
+// testCmd represents the test command
+var JSONRootCmd = &cobra.Command{
+	Use:   "json",
+	Short: "Execute JSON document API calls.",
+}
+
+func init() {
+	JSONRootCmd.AddCommand(jsonAddCmd)
+	JSONRootCmd.AddCommand(jsonGetCmd)
+	JSONRootCmd.AddCommand(jsonAddWithKeyCmd)
+
+	JSONRootCmd.Flags().StringVar(&jsonFlags.jsonFile, "json", "", "The JSON file to add. Defaults to \"{\"dummy\": \"DUMMY\"}\"")
+}
+
+func loadJSON() (map[string]any, error) {
+	var ret map[string]any = make(map[string]any)
+
+	if jsonFlags.jsonFile == "" {
+		ret["dummy"] = "DUMMY"
+		return ret, nil
+	}
+	bytes, err := os.ReadFile(jsonFlags.jsonFile)
+	if err != nil {
+		return nil, err
+	}
+	err = stdjson.Unmarshal(bytes, ret)
+	if err != nil {
+		return nil, err
+	}
+	return ret, nil
 }
