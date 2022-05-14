@@ -43,11 +43,13 @@ import (
 var jsonAddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Adds a JSON into the given chain.",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
 		}
-		client, err := core.AppCore.NewClient()
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		jsonDoc, err := loadJSON()
 		if err != nil {
 			return fmt.Errorf("Unable to load the JSON document: %w\n", err)
@@ -55,9 +57,20 @@ var jsonAddCmd = &cobra.Command{
 		fmt.Println("JSON to be added:")
 		fmt.Println("=================")
 		core.PrintAsJSON(jsonDoc)
+
+		client, err := core.AppCore.NewClient()
+		if err != nil {
+			return fmt.Errorf("Unable to initialize the client: %w\n", err)
+		}
 		ret, _, err := client.JsonDocumentApi.JsonDocumentsAdd(nil, flags.Flags.Chain, jsonDoc)
 		if err != nil {
-			return fmt.Errorf("Unable add the dummy JSON document: %w\n", err)
+			e := client.ToGenericSwaggerError(err)
+			if e != nil {
+				return fmt.Errorf("Unable add the JSON document: %w\n%s\n", err,
+					core.ToPrettyJSON(e.Model()))
+			} else {
+				return fmt.Errorf("Unable add the JSON document: %w\n", err)
+			}
 		}
 		fmt.Println()
 		fmt.Println("Result:")

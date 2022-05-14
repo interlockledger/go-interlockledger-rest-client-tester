@@ -37,10 +37,14 @@ import (
 	"fmt"
 )
 
-func PrintAsJSON(o any) {
+func ToPrettyJSON(o any) string {
 	bin, err := json.MarshalIndent(o, "", "  ")
 	if err != nil {
 		panic(fmt.Sprintf("Unable to convert the object into a JSON string: %v", err))
 	}
-	fmt.Println(string(bin))
+	return string(bin)
+}
+
+func PrintAsJSON(o any) {
+	fmt.Println(ToPrettyJSON(o))
 }

@@ -46,7 +46,13 @@ var chainListCmd = &cobra.Command{
 		client, err := core.AppCore.NewClient()
 		chains, _, err := client.ChainApi.ChainsList(nil)
 		if err != nil {
-			return fmt.Errorf("Unable to list the chains: %w\n", err)
+			e := client.ToGenericSwaggerError(err)
+			if e != nil {
+				return fmt.Errorf("Unable list the chains: %w\n%s\n", err,
+					core.ToPrettyJSON(e.Model()))
+			} else {
+				return fmt.Errorf("Unable list the chains: %w\n", err)
+			}
 		}
 		for _, c := range chains {
 			core.PrintAsJSON(c)

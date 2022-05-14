@@ -32,9 +32,11 @@ package json
 
 import (
 	stdjson "encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client/crypto"
 	"github.com/spf13/cobra"
 )
 
@@ -52,8 +54,7 @@ func init() {
 	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.JSONFile, "json", "", "The JSON file to add. Defaults to \"{\"dummy\": \"DUMMY\"}\"")
 	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.CertFile, "cert", "", "The public key certificate.")
 	JSONRootCmd.PersistentFlags().Int64VarP(&flags.Flags.Id, "id", "i", int64(-1), "The ID of the document. It may be required by some commands.")
-
-	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.ReaderKeyFile, "reader-key", "", "The file that contains the definition of the reader key.")
+	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.ReaderCertFile, "reader-cert", "", "The certificate file that contains the reader key.")
 }
 
 func loadJSON() (map[string]any, error) {
@@ -71,4 +72,17 @@ func loadJSON() (map[string]any, error) {
 		return nil, err
 	}
 	return ret, nil
+}
+
+func LoadReaderCertificate(file string) (crypto.ReaderKey, error) {
+	// Load the reader certificate
+	cert, err := crypto.LoadCertificate(file)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to load the reader certificate: %w", err)
+	}
+	readerKey, err := crypto.NewReaderKey(cert[0].PublicKey, nil)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to extract the public key: %w", err)
+	}
+	return readerKey, nil
 }

@@ -47,25 +47,59 @@ var jsonAddWithKeyCmdFlags = struct {
 var jsonAddWithKeyCmd = &cobra.Command{
 	Use:   "add-with-key",
 	Short: "Adds a JSON into the given chain using the specified key.",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
 		}
+		if flags.Flags.ReaderCertFile == "" {
+			return fmt.Errorf("Reader certificate is required.")
+		}
+		return nil
+	},
+
+	RunE: func(cmd *cobra.Command, args []string) error {
+		key, err := LoadReaderCertificate(flags.Flags.ReaderCertFile)
+		if err != nil {
+			return err
+		}
+		encKey, keyId, err := key.EncodedPublicKey()
+		if err != nil {
+			return err
+		}
+		fmt.Println("ReaderKey:")
+		fmt.Println("=================")
+		fmt.Println(encKey)
+		fmt.Println("KeyID:")
+		fmt.Println("=================")
+		fmt.Println(keyId)
+		jsonDoc, err := loadJSON()
+		if err != nil {
+			return fmt.Errorf("Unable to load the JSON document: %w\n", err)
+		}
+		fmt.Println("JSON to be added:")
+		fmt.Println("=================")
+		core.PrintAsJSON(jsonDoc)
 
 		client, err := core.AppCore.NewClient()
-		dummy := map[string]any{"a": "b"}
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithKey(nil, flags.Flags.Chain,
-			"", "testKey",
-			dummy)
 		if err != nil {
-			return fmt.Errorf("Unable add the dummy JSON document: %w\n", err)
+			return fmt.Errorf("Unable to initialize the client: %w\n", err)
 		}
+		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithKey(nil, flags.Flags.Chain,
+			encKey, keyId,
+			jsonDoc)
+		if err != nil {
+			e := client.ToGenericSwaggerError(err)
+			if e != nil {
+				return fmt.Errorf("Unable add the JSON document: %w\n%s\n", err,
+					core.ToPrettyJSON(e.Model()))
+			} else {
+				return fmt.Errorf("Unable add the JSON document: %w\n", err)
+			}
+		}
+		fmt.Println()
+		fmt.Println("Result:")
+		fmt.Println("=======")
 		core.PrintAsJSON(ret)
 		return nil
 	},
-}
-
-func init() {
-	jsonAddWithKeyCmd.Flags().StringVarP(&flags.Flags.Chain, "chain", "c", "", "The ID of the chain. It may be required by some commands.")
-	jsonAddWithKeyCmd.Flags().Int64VarP(&flags.Flags.Id, "id", "i", int64(-1), "The ID of the document. It may be required by some commands.")
 }

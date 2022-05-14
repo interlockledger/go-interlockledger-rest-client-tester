@@ -43,18 +43,26 @@ var jsonGetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a JSON into the given chain",
 	Long:  "Get a JSON into the given chain. It requires the chain and id.",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
 		}
 		if err := flags.Flags.RequireId(); err != nil {
 			return err
 		}
-
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := core.AppCore.NewClient()
 		ret, _, err := client.JsonDocumentApi.JsonDocumentsGet(nil, flags.Flags.Chain, flags.Flags.Id)
 		if err != nil {
-			return fmt.Errorf("Unable to get the json document: %w\n", err)
+			e := client.ToGenericSwaggerError(err)
+			if e != nil {
+				return fmt.Errorf("Unable get the JSON document: %w\n%s\n", err,
+					core.ToPrettyJSON(e.Model()))
+			} else {
+				return fmt.Errorf("Unable get the JSON document: %w\n", err)
+			}
 		}
 		core.PrintAsJSON(ret)
 		return nil

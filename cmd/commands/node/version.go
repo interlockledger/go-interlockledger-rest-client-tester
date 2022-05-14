@@ -46,7 +46,13 @@ var nodeVersionCmd = &cobra.Command{
 		client, err := core.AppCore.NewClient()
 		version, _, err := client.NodeApi.ApiVersion(nil)
 		if err != nil {
-			return fmt.Errorf("Unable to query the node's version: %w\n", err)
+			e := client.ToGenericSwaggerError(err)
+			if e != nil {
+				return fmt.Errorf("Unable get the version of the node: %w\n%s\n", err,
+					core.ToPrettyJSON(e.Model()))
+			} else {
+				return fmt.Errorf("Unable get the version of the node: %w\n", err)
+			}
 		}
 		fmt.Printf("The server's version is %s\n", version)
 		return nil
