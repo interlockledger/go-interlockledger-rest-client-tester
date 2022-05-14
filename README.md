@@ -1,34 +1,42 @@
 #  go-interlockledger-rest-client-tester
 
-This is the test program for go-interlockledger-rest-client. It has been
+This is the test program for **go-interlockledger-rest-client**. It has been
 designed to test calls to the API and debug the client code as a writing 
 unit-tests for the client is very cumbersome.
 
-It can also be used as an example about how the API can be used.
+It can also be used as an example about how the
+**go-interlockledger-rest-client** API can be used.
 
 ## How to run it
 
-Just checkout this repository in parallel to the code within this repository.
-For example:
+As a test tool, this program will compile if and only if it is parallel to the
+source code of **go-interlockledger-rest-client**. For example:
 
 ```
 ./go-interlockledger-rest-client
 ./go-interlockledger-rest-client-teste
 ```
 
-You can also create a workspace if it is a better way to manage the projects.
+You can also create a workspace if it is a better way to manage the projects if
+you wish to.
 
 ## Configuration
 
-This directory contains a very simple program that illustrates how the client
-can be used.
+This program requires a json configuration file with the following structure:
 
-This program will require:
+```json
+{
+    "basePath": "https://server:port",
+    "keyFile": "key.pem",
+    "certFile": "cert.pem"    
+}
+```
 
-- The client certificate with the key in PEM format;
-- A proper `config.json` with the URL of the node;
+If this file is called `config.json`, it will be automatically loaded during the
+startup of the program.
 
-Just run the program to see how the API works.
+The files pointed by `keyFile` and `certFile` are the certificate and the key file
+of the certificate authorized to use the node.
 
 ## License
 
