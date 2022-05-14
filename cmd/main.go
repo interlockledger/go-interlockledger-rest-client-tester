@@ -37,5 +37,12 @@ import (
 )
 
 func main() {
+	/*
+		This program was written as a spf13/cobra application. Please refer to
+		the documentation of this library to understand how to navigate inside
+		this code.
+
+		As a general rule, each command is linked with a single API call.
+	*/
 	commands.Execute()
 }

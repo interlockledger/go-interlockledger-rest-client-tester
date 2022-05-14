@@ -35,19 +35,25 @@ import (
 
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
+	"github.com/interlockledger/go-interlockledger-rest-client/client/models"
 	"github.com/spf13/cobra"
 )
 
+var flagContextId string
+
 // testCmd represents the test command
-var jsonAddWithKeyCmd = &cobra.Command{
-	Use:   "add-with-key",
-	Short: "Adds a JSON into the given chain using the specified key.",
+var jsonAllowCmd = &cobra.Command{
+	Use:   "allow",
+	Short: "Adds a new allowed reader.",
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
 		}
 		if flags.Flags.ReaderCertFile == "" {
 			return fmt.Errorf("Reader certificate is required.")
+		}
+		if flagContextId == "" {
+			return fmt.Errorf("The context is required.")
 		}
 		return nil
 	},
@@ -67,21 +73,23 @@ var jsonAddWithKeyCmd = &cobra.Command{
 		fmt.Println("KeyID:")
 		fmt.Println("=================")
 		fmt.Println(keyId)
-		jsonDoc, err := loadJSON()
-		if err != nil {
-			return fmt.Errorf("Unable to load the JSON document: %w\n", err)
-		}
-		fmt.Println("JSON to be added:")
-		fmt.Println("=================")
-		core.PrintAsJSON(jsonDoc)
+
+		var body models.AllowedReadersModel
+		body.ContextId = flagContextId
+		body.Readers = make([]models.ReaderModel, 1)
+		body.Readers[0] = models.ReaderModel{
+			Name:      keyId,
+			PublicKey: encKey}
+
+		fmt.Println("Request body:")
+		fmt.Println("=============")
+		core.PrintAsJSON(body)
 
 		client, err := core.AppCore.NewClient()
 		if err != nil {
 			return fmt.Errorf("Unable to initialize the client: %w\n", err)
 		}
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithKey(nil, flags.Flags.Chain,
-			encKey, keyId,
-			jsonDoc)
+		ret, _, err := client.JsonDocumentApi.JsonDocumentsAllowReaders(nil, flags.Flags.Chain, &body)
 		if err != nil {
 			e := client.ToGenericSwaggerError(err)
 			if e != nil {
@@ -97,4 +105,8 @@ var jsonAddWithKeyCmd = &cobra.Command{
 		core.PrintAsJSON(ret)
 		return nil
 	},
+}
+
+func init() {
+	jsonAllowCmd.Flags().StringVar(&flagContextId, "context", "", "The context of the key.")
 }

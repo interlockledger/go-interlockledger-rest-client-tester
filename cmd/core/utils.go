@@ -28,8 +28,6 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// This package contains the implementation of the commands used to test each
-// IL2 API.
 package core
 
 import (
@@ -37,6 +35,8 @@ import (
 	"fmt"
 )
 
+// Converts the object o into a formatted JSON. It is used to output JSON
+// responses when necessary.
 func ToPrettyJSON(o any) string {
 	bin, err := json.MarshalIndent(o, "", "  ")
 	if err != nil {
@@ -45,6 +45,7 @@ func ToPrettyJSON(o any) string {
 	return string(bin)
 }
 
+// Prints the given object as a JSON into stdout.
 func PrintAsJSON(o any) {
 	fmt.Println(ToPrettyJSON(o))
 }
