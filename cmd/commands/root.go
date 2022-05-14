@@ -36,6 +36,7 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/json"
 
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/node"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/records"
 	"github.com/spf13/cobra"
 )
 
@@ -44,9 +45,9 @@ func init() {
 	rootCmd.AddCommand(chain.ChainRootCmd)
 	rootCmd.AddCommand(json.JSONRootCmd)
 	rootCmd.AddCommand(node.NodeRootCmd)
+	rootCmd.AddCommand(records.RecordRootCmd)
 	rootCmd.PersistentFlags().StringVar(&flags.Flags.ConfigFile, "config", "config.json", "The configuration file.")
 	rootCmd.PersistentFlags().StringVarP(&flags.Flags.Chain, "chain", "c", "", "The ID of the chain. It may be required by some commands.")
-	rootCmd.PersistentFlags().Int64VarP(&flags.Flags.Id, "id", "i", int64(-1), "The ID of the document. It may be required by some commands.")
 }
 
 var (

@@ -28,7 +28,7 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package json
+package records
 
 import (
 	"fmt"
@@ -40,29 +40,18 @@ import (
 )
 
 // testCmd represents the test command
-var jsonAddCmd = &cobra.Command{
-	Use:   "add",
-	Short: "Adds a dummy JSON into the given chain.",
+var recordListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List the chains on this node.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := flags.Flags.RequireChainId(); err != nil {
-			return err
-		}
 		client, err := core.CreateAPIClient(flags.Flags.ConfigFile)
-		jsonDoc, err := loadJSON()
+		chains, _, err := client.ChainApi.ChainsList(nil)
 		if err != nil {
-			return fmt.Errorf("Unable to load the JSON document: %w\n", err)
+			return fmt.Errorf("Unable to list the chains: %w\n", err)
 		}
-		fmt.Println("JSON to be added:")
-		fmt.Println("=================")
-		core.PrintAsJSON(jsonDoc)
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAdd(nil, flags.Flags.Chain, jsonDoc)
-		if err != nil {
-			return fmt.Errorf("Unable add the dummy JSON document: %w\n", err)
+		for _, c := range chains {
+			core.PrintAsJSON(c)
 		}
-		fmt.Println()
-		fmt.Println("Result:")
-		fmt.Println("=======")
-		core.PrintAsJSON(ret)
 		return nil
 	},
 }

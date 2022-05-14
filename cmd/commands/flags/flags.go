@@ -35,6 +35,8 @@ import "fmt"
 type GlobalFlags struct {
 	ConfigFile string // Configuration file
 	Chain      string // Chain ID
+	JSONFile   string // JSON file
+	CertFile   string // Certificate file
 	Id         int64  // Id
 }
 
@@ -48,7 +50,7 @@ func (f *GlobalFlags) RequireChainId() error {
 
 func (f *GlobalFlags) RequireId() error {
 	if f.Id == -1 {
-		return fmt.Errorf("id is required.")
+		return fmt.Errorf("id is missing.")
 	} else {
 		return nil
 	}

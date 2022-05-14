@@ -34,12 +34,9 @@ import (
 	stdjson "encoding/json"
 	"os"
 
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/spf13/cobra"
 )
-
-var jsonFlags = struct {
-	jsonFile string
-}{}
 
 // testCmd represents the test command
 var JSONRootCmd = &cobra.Command{
@@ -52,21 +49,23 @@ func init() {
 	JSONRootCmd.AddCommand(jsonGetCmd)
 	JSONRootCmd.AddCommand(jsonAddWithKeyCmd)
 
-	JSONRootCmd.Flags().StringVar(&jsonFlags.jsonFile, "json", "", "The JSON file to add. Defaults to \"{\"dummy\": \"DUMMY\"}\"")
+	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.JSONFile, "json", "", "The JSON file to add. Defaults to \"{\"dummy\": \"DUMMY\"}\"")
+	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.CertFile, "cert", "", "The public key certificate.")
+	JSONRootCmd.PersistentFlags().Int64VarP(&flags.Flags.Id, "id", "i", int64(-1), "The ID of the document. It may be required by some commands.")
+
 }
 
 func loadJSON() (map[string]any, error) {
-	var ret map[string]any = make(map[string]any)
 
-	if jsonFlags.jsonFile == "" {
-		ret["dummy"] = "DUMMY"
-		return ret, nil
+	if flags.Flags.JSONFile == "" {
+		return map[string]any{"dummy": "DUMMY"}, nil
 	}
-	bytes, err := os.ReadFile(jsonFlags.jsonFile)
+	bytes, err := os.ReadFile(flags.Flags.JSONFile)
 	if err != nil {
 		return nil, err
 	}
-	err = stdjson.Unmarshal(bytes, ret)
+	ret := make(map[string]any)
+	err = stdjson.Unmarshal(bytes, &ret)
 	if err != nil {
 		return nil, err
 	}
