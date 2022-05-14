@@ -34,45 +34,30 @@ package core
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
-
-	"github.com/interlockledger/go-interlockledger-rest-client/client"
 )
 
-/*
-Configures and creates the APIClient.
-*/
-func CreateAPIClient(configFile string) (*client.APIClient, error) {
-
-	// Load the configuration
-	var cfg map[string]string
-	b, err := os.ReadFile(configFile)
-	if err != nil {
-		return nil, fmt.Errorf("Unable to load the configuration file: %w\n", err)
-	}
-	err = json.Unmarshal(b, &cfg)
-	if err != nil {
-		return nil, fmt.Errorf("Unable to parse the configuration file: %w\n", err)
-	}
-
-	// Creates a new configuration.
-	configuration := client.NewConfiguration()
-	// Set the name of the server here
-	configuration.BasePath = cfg["basePath"]
-	// Sets the required client certificate.
-	err = configuration.SetClientCertificate("cert.pem", "key.pem")
-	if err != nil {
-		return nil, fmt.Errorf("Unable to load the client certificate: %w\n", err)
-	}
-	// Create the new client
-	return client.NewAPIClient(configuration), nil
+type Configuration struct {
+	Loaded   bool   `json:"-"`
+	BasePath string `json:"basePath"`
+	CertFile string `json:"certFile"`
+	KeyFile  string `json:"keyFile"`
 }
 
-func PrintAsJSON(o any) {
-	bin, err := json.MarshalIndent(o, "", "  ")
+// Loads the default configuration.
+func (c *Configuration) Defaults() {
+	c.BasePath = "https://server:port"
+	c.CertFile = "key.pem"
+	c.KeyFile = "cert.pem"
+}
+
+// Loads the configuration from a file.
+func (c *Configuration) Load(file string) error {
+	bin, err := os.ReadFile(file)
 	if err != nil {
-		panic(fmt.Sprintf("Unable to convert the object into a JSON string: %v", err))
+		return err
 	}
-	fmt.Println(string(bin))
+	err = json.Unmarshal(bin, c)
+	c.Loaded = err == nil
+	return err
 }

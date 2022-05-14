@@ -53,6 +53,7 @@ func init() {
 	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.CertFile, "cert", "", "The public key certificate.")
 	JSONRootCmd.PersistentFlags().Int64VarP(&flags.Flags.Id, "id", "i", int64(-1), "The ID of the document. It may be required by some commands.")
 
+	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.ReaderKeyFile, "reader-key", "", "The file that contains the definition of the reader key.")
 }
 
 func loadJSON() (map[string]any, error) {

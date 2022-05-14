@@ -28,44 +28,42 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package json
+// This package contains the implementation of the commands used to test each
+// IL2 API.
+package core
 
 import (
 	"fmt"
 
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
-	"github.com/spf13/cobra"
+	"github.com/interlockledger/go-interlockledger-rest-client/client"
 )
 
-var jsonAddWithKeyCmdFlags = struct {
-	certFile string
-	keyId    string
-}{}
+var AppCore ApplicationCore
 
-// testCmd represents the test command
-var jsonAddWithKeyCmd = &cobra.Command{
-	Use:   "add-with-key",
-	Short: "Adds a JSON into the given chain using the specified key.",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := flags.Flags.RequireChainId(); err != nil {
-			return err
-		}
-
-		client, err := core.AppCore.NewClient()
-		dummy := map[string]any{"a": "b"}
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithKey(nil, flags.Flags.Chain,
-			"", "testKey",
-			dummy)
-		if err != nil {
-			return fmt.Errorf("Unable add the dummy JSON document: %w\n", err)
-		}
-		core.PrintAsJSON(ret)
-		return nil
-	},
+type ApplicationCore struct {
+	Config Configuration
 }
 
-func init() {
-	jsonAddWithKeyCmd.Flags().StringVarP(&flags.Flags.Chain, "chain", "c", "", "The ID of the chain. It may be required by some commands.")
-	jsonAddWithKeyCmd.Flags().Int64VarP(&flags.Flags.Id, "id", "i", int64(-1), "The ID of the document. It may be required by some commands.")
+func (c *ApplicationCore) LoadConfig(configFile string) error {
+	if c.Config.Loaded {
+		return nil
+	}
+	return c.Config.Load(configFile)
+}
+
+func (c *ApplicationCore) NewClient() (*client.APIClient, error) {
+	if !c.Config.Loaded {
+		return nil, fmt.Errorf("The configuration was not loaded.")
+	}
+	// Creates a new configuration.
+	configuration := client.NewConfiguration()
+	// Set the name of the server here
+	configuration.BasePath = c.Config.BasePath
+	// Sets the required client certificate.
+	err := configuration.SetClientCertificate(c.Config.CertFile, c.Config.KeyFile)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to load the client certificate: %w\n", err)
+	}
+	// Create the new client
+	return client.NewAPIClient(configuration), nil
 }

@@ -35,7 +35,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
@@ -44,7 +43,7 @@ var recordListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List the chains on this node.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := core.CreateAPIClient(flags.Flags.ConfigFile)
+		client, err := core.AppCore.NewClient()
 		chains, _, err := client.ChainApi.ChainsList(nil)
 		if err != nil {
 			return fmt.Errorf("Unable to list the chains: %w\n", err)

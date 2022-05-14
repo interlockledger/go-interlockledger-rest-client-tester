@@ -33,11 +33,12 @@ package flags
 import "fmt"
 
 type GlobalFlags struct {
-	ConfigFile string // Configuration file
-	Chain      string // Chain ID
-	JSONFile   string // JSON file
-	CertFile   string // Certificate file
-	Id         int64  // Id
+	ConfigFile    string // Configuration file
+	Chain         string // Chain ID
+	JSONFile      string // JSON file
+	CertFile      string // Certificate file
+	Id            int64  // Id
+	ReaderKeyFile string // Reader key
 }
 
 func (f *GlobalFlags) RequireChainId() error {

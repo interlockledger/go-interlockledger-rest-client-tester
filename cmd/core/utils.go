@@ -28,44 +28,19 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package json
+// This package contains the implementation of the commands used to test each
+// IL2 API.
+package core
 
 import (
+	"encoding/json"
 	"fmt"
-
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
-	"github.com/spf13/cobra"
 )
 
-var jsonAddWithKeyCmdFlags = struct {
-	certFile string
-	keyId    string
-}{}
-
-// testCmd represents the test command
-var jsonAddWithKeyCmd = &cobra.Command{
-	Use:   "add-with-key",
-	Short: "Adds a JSON into the given chain using the specified key.",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := flags.Flags.RequireChainId(); err != nil {
-			return err
-		}
-
-		client, err := core.AppCore.NewClient()
-		dummy := map[string]any{"a": "b"}
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithKey(nil, flags.Flags.Chain,
-			"", "testKey",
-			dummy)
-		if err != nil {
-			return fmt.Errorf("Unable add the dummy JSON document: %w\n", err)
-		}
-		core.PrintAsJSON(ret)
-		return nil
-	},
-}
-
-func init() {
-	jsonAddWithKeyCmd.Flags().StringVarP(&flags.Flags.Chain, "chain", "c", "", "The ID of the chain. It may be required by some commands.")
-	jsonAddWithKeyCmd.Flags().Int64VarP(&flags.Flags.Id, "id", "i", int64(-1), "The ID of the document. It may be required by some commands.")
+func PrintAsJSON(o any) {
+	bin, err := json.MarshalIndent(o, "", "  ")
+	if err != nil {
+		panic(fmt.Sprintf("Unable to convert the object into a JSON string: %v", err))
+	}
+	fmt.Println(string(bin))
 }

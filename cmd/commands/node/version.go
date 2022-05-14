@@ -35,7 +35,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
@@ -44,7 +43,7 @@ var nodeVersionCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get the version of the server.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := core.CreateAPIClient(flags.Flags.ConfigFile)
+		client, err := core.AppCore.NewClient()
 		version, _, err := client.NodeApi.ApiVersion(nil)
 		if err != nil {
 			return fmt.Errorf("Unable to query the node's version: %w\n", err)

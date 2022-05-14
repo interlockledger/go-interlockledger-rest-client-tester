@@ -34,10 +34,23 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/chain"
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/json"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/node"
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/records"
 	"github.com/spf13/cobra"
+)
+
+var (
+	// Used for flags.
+	rootCmd = &cobra.Command{
+		Use:   "IL2 Go REST Client Tester",
+		Short: "Test program for the IL2 Go REST Client",
+		Long:  "This is a very simple test program for the IL2 Go REST Client.",
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			return core.AppCore.LoadConfig(flags.Flags.ConfigFile)
+		},
+	}
 )
 
 func init() {
@@ -49,16 +62,6 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&flags.Flags.ConfigFile, "config", "config.json", "The configuration file.")
 	rootCmd.PersistentFlags().StringVarP(&flags.Flags.Chain, "chain", "c", "", "The ID of the chain. It may be required by some commands.")
 }
-
-var (
-	// Used for flags.
-	rootCmd = &cobra.Command{
-		Use:   "IL2 Go REST Client Tester",
-		Short: "Test program for the IL2 Go REST Client",
-		Long:  "This is a very simple test program for the IL2 Go REST Client.",
-		//RunE: runOTP,
-	}
-)
 
 // Execute executes the root command.
 func Execute() error {

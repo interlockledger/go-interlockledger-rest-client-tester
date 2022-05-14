@@ -51,7 +51,7 @@ var jsonGetCmd = &cobra.Command{
 			return err
 		}
 
-		client, err := core.CreateAPIClient(flags.Flags.ConfigFile)
+		client, err := core.AppCore.NewClient()
 		ret, _, err := client.JsonDocumentApi.JsonDocumentsGet(nil, flags.Flags.Chain, flags.Flags.Id)
 		if err != nil {
 			return fmt.Errorf("Unable to get the json document: %w\n", err)

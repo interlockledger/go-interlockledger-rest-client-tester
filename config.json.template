@@ -1,3 +1,5 @@
 {
-    "basePath": "https://server:port"
+    "basePath": "https://server:port",
+    "keyFile": "key.pem",
+    "certFile": "cert.pem"    
 }

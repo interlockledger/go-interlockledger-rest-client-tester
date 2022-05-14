@@ -42,12 +42,12 @@ import (
 // testCmd represents the test command
 var jsonAddCmd = &cobra.Command{
 	Use:   "add",
-	Short: "Adds a dummy JSON into the given chain.",
+	Short: "Adds a JSON into the given chain.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
 		}
-		client, err := core.CreateAPIClient(flags.Flags.ConfigFile)
+		client, err := core.AppCore.NewClient()
 		jsonDoc, err := loadJSON()
 		if err != nil {
 			return fmt.Errorf("Unable to load the JSON document: %w\n", err)
