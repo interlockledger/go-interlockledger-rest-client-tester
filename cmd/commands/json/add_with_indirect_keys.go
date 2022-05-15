@@ -31,60 +31,65 @@
 package json
 
 import (
-	stdjson "encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
-	"github.com/interlockledger/go-interlockledger-rest-client/crypto"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 	"github.com/spf13/cobra"
 )
 
+var flagPubKeyRefs *[]string
+
 // testCmd represents the test command
-var JSONRootCmd = &cobra.Command{
-	Use:   "json",
-	Short: "Execute JSON document API calls.",
+var jsonAddWithIndirectKeyCmd = &cobra.Command{
+	Use:   "add-with-indired-keys",
+	Short: "Adds a JSON into the given chain using the specified key.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireChainId(); err != nil {
+			return err
+		}
+		if len(*flagPubKeyRefs) == 0 {
+			return fmt.Errorf("At least one reference must be provided.")
+		}
+		return nil
+	},
+
+	RunE: func(cmd *cobra.Command, args []string) error {
+		fmt.Println("Key references:")
+		fmt.Println("=================")
+		for _, s := range *flagPubKeyRefs {
+			fmt.Println(s)
+		}
+		jsonDoc, err := loadJSON()
+		if err != nil {
+			return fmt.Errorf("Unable to load the JSON document: %w\n", err)
+		}
+		fmt.Println("JSON to be added:")
+		fmt.Println("=================")
+		core.PrintAsJSON(jsonDoc)
+
+		client, err := core.AppCore.NewClient()
+		if err != nil {
+			return fmt.Errorf("Unable to initialize the client: %w\n", err)
+		}
+		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithIndirectKeys(nil, flags.Flags.Chain, *flagPubKeyRefs, jsonDoc)
+		if err != nil {
+			e := client.ToGenericSwaggerError(err)
+			if e != nil {
+				return fmt.Errorf("Unable add the JSON document: %w\n%s\n", err,
+					core.ToPrettyJSON(e.Model()))
+			} else {
+				return fmt.Errorf("Unable add the JSON document: %w\n", err)
+			}
+		}
+		fmt.Println()
+		fmt.Println("Result:")
+		fmt.Println("=======")
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
 
 func init() {
-	JSONRootCmd.AddCommand(jsonAddCmd)
-	JSONRootCmd.AddCommand(jsonGetCmd)
-	JSONRootCmd.AddCommand(jsonAddWithKeyCmd)
-	JSONRootCmd.AddCommand(jsonAllowCmd)
-	JSONRootCmd.AddCommand(jsonAddWithIndirectKeyCmd)
-
-	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.JSONFile, "json", "", "The JSON file to add. Defaults to \"{\"dummy\": \"DUMMY\"}\"")
-	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.CertFile, "cert", "", "The public key certificate.")
-	JSONRootCmd.PersistentFlags().Int64VarP(&flags.Flags.Id, "id", "i", int64(-1), "The ID of the document. It may be required by some commands.")
-	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.ReaderCertFile, "reader-cert", "", "The certificate file that contains the reader key.")
-}
-
-func loadJSON() (map[string]any, error) {
-
-	if flags.Flags.JSONFile == "" {
-		return map[string]any{"dummy": "DUMMY"}, nil
-	}
-	bytes, err := os.ReadFile(flags.Flags.JSONFile)
-	if err != nil {
-		return nil, err
-	}
-	ret := make(map[string]any)
-	err = stdjson.Unmarshal(bytes, &ret)
-	if err != nil {
-		return nil, err
-	}
-	return ret, nil
-}
-
-func LoadReaderCertificate(file string) (crypto.ReaderKey, error) {
-	// Load the reader certificate
-	cert, err := crypto.LoadCertificate(file)
-	if err != nil {
-		return nil, fmt.Errorf("Unable to load the reader certificate: %w", err)
-	}
-	readerKey, err := crypto.NewReaderKey(cert[0].PublicKey, nil)
-	if err != nil {
-		return nil, fmt.Errorf("Unable to extract the public key: %w", err)
-	}
-	return readerKey, nil
+	flagPubKeyRefs = jsonAddWithIndirectKeyCmd.Flags().StringArray("pub-key-ref", []string{}, "A reference to a public key.")
 }
