@@ -35,8 +35,12 @@ import (
 
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
+	"github.com/interlockledger/go-interlockledger-rest-client/client/jsondocs"
+	"github.com/interlockledger/go-interlockledger-rest-client/crypto"
 	"github.com/spf13/cobra"
 )
+
+var flagPrivateKey string
 
 // testCmd represents the test command
 var jsonGetCmd = &cobra.Command{
@@ -63,8 +67,34 @@ var jsonGetCmd = &cobra.Command{
 			} else {
 				return fmt.Errorf("Unable get the JSON document: %w\n", err)
 			}
+
 		}
+		fmt.Println()
+		fmt.Println("Encrypted JSON")
+		fmt.Println("==============")
 		core.PrintAsJSON(ret)
+		if flagPrivateKey != "" {
+			privKey, err := crypto.LoadPrivateKey(flagPrivateKey)
+			if err != nil {
+				return err
+			}
+			readerKey, err := crypto.NewReaderKeyFromPrivateKey(privKey)
+			if err != nil {
+				return err
+			}
+			dec, err := jsondocs.DecipherJSON(readerKey, &ret)
+			if err != nil {
+				return err
+			}
+			fmt.Println()
+			fmt.Println("Decrypted JSON")
+			fmt.Println("==============")
+			fmt.Println(dec)
+		}
 		return nil
 	},
+}
+
+func init() {
+	jsonGetCmd.Flags().StringVar(&flagPrivateKey, "private", "", "The reader's private key file. If set, the JSON document will be decrypted.")
 }
