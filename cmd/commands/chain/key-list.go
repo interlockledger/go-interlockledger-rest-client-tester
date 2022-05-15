@@ -32,22 +32,24 @@ package chain
 
 import (
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
 // testCmd represents the test command
-var ChainRootCmd = &cobra.Command{
-	Use:   "chain",
-	Short: "Execute chain related APIs calls.",
-}
-
-func init() {
-	ChainRootCmd.AddCommand(chainListCmd)
-	ChainRootCmd.AddCommand(chainNewChainCmd)
-	ChainRootCmd.AddCommand(chainDetailsCmd)
-	ChainRootCmd.AddCommand(chainActiveAppsCmd)
-	ChainRootCmd.AddCommand(chainActiveAppsAddCmd)
-	ChainRootCmd.AddCommand(chainInterlockingListCmd)
-	ChainRootCmd.AddCommand(chainInterlockingAddCmd)
-	ChainRootCmd.AddCommand(chainKeyListCmd)
-	ChainRootCmd.AddCommand(chainKeyAddCmd)
+var chainKeyListCmd = &cobra.Command{
+	Use:   "key-list",
+	Short: "List the keys authorized to use the chain.",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		client, err := core.AppCore.NewClient()
+		chains, _, err := client.ChainApi.ChainPermittedKeysList(nil, flags.Flags.Chain)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		for _, c := range chains {
+			core.PrintAsJSON(c)
+		}
+		return nil
+	},
 }

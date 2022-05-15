@@ -1,0 +1,18 @@
+[
+{
+  "name": "test",
+  "permissions": [
+    "#4",
+    "#5",
+    "#8"
+  ],
+  "purposes": [
+    "Action",
+    "Protocol",
+    "ForceInterlock"
+  ],
+  "id": "Key!N-YsugK43Qrp4EsCwpnF5SjVseA#SHA1",
+  "publicKey": "PubKey!KPiQEPiIs5ujj99b2wgcQMnkhMW3HHzkoILBqAtIcBNiKq8ls7Y6-ajrs7zAsB64nVIfnkQ-kB447zhVpA1xa1cyfw1Rkd4IaohN-Edrf1Pqd0Vhtg0FWGrjfCUWIXZzPYEyrbTdlSOg1gWFIn8Fb79xVYUU7-Tbr3wJVA1bmHKcIZDN4qsjtC1nDf_hNuKCYd-mX8VVBdxH9asbCSvxP3Ir3pVQGuxKwgwg28jCjU5SpaIQ1iF5aeHyNdl_NZ1_Cu8jvDJYwEjhcweqGtLo-hpwQ3mRPiMnmsRfeXWw6h7VmTAq0UOHyXqdOI7iyHWx2jUpia5i94HKzrdI9O3tRtx5dGAdXXRUVBa5LS5SrqBdcM1b9asvQ94mptK2I0TL1nsn5GWCETjwEkfUBXqDQYJzYeB6Uj6te_8ouO1un3I_XZcimBywdKb4_1B0P8vcLTFFIfskOoC5A3JAe90iPRg-VYNny8U2zOFgEos6j1M9VAmQvxB7dhOAl0D9C8nQJ-FlMwQ5EAMBAAE#RSA"
+}
+]
+
