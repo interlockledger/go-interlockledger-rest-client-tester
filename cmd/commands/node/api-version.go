@@ -39,9 +39,9 @@ import (
 )
 
 // testCmd represents the test command
-var nodeVersionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Get the version of the server.",
+var nodeAPIVersionCmd = &cobra.Command{
+	Use:   "api-version",
+	Short: "Get the version of the API.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := core.AppCore.NewClient()
 		version, _, err := client.NodeApi.ApiVersion(nil)

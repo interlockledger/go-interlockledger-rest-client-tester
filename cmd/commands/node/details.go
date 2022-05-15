@@ -31,17 +31,30 @@
 package node
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
 // testCmd represents the test command
-var NodeRootCmd = &cobra.Command{
-	Use:   "node",
-	Short: "Node APIs.",
-}
-
-func init() {
-	NodeRootCmd.AddCommand(nodeAPIVersionCmd)
-	NodeRootCmd.AddCommand(nodeDetailsCmd)
-
+var nodeDetailsCmd = &cobra.Command{
+	Use:   "details",
+	Short: "Get the details of the node.",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		client, err := core.AppCore.NewClient()
+		ret, _, err := client.NodeApi.NodeDetails(nil)
+		if err != nil {
+			e := client.ToGenericSwaggerError(err)
+			if e != nil {
+				return fmt.Errorf("Unable get the version of the node: %w\n%s\n", err,
+					core.ToPrettyJSON(e.Model()))
+			} else {
+				return fmt.Errorf("Unable get the version of the node: %w\n", err)
+			}
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
