@@ -31,19 +31,30 @@
 package node
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
 // testCmd represents the test command
-var NodeRootCmd = &cobra.Command{
-	Use:   "node",
-	Short: "Node APIs.",
-}
-
-func init() {
-	NodeRootCmd.AddCommand(nodeAPIVersionCmd)
-	NodeRootCmd.AddCommand(nodeDetailsCmd)
-	NodeRootCmd.AddCommand(nodeAppsCmd)
-	NodeRootCmd.AddCommand(nodeInterlockingsCmd)
-	NodeRootCmd.AddCommand(nodePeersCmd)
+var nodePeersCmd = &cobra.Command{
+	Use:   "peers",
+	Short: "Get a list of peers kwown in the network.",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		client, err := core.AppCore.NewClient()
+		ret, _, err := client.NodeApi.PeersList(nil)
+		if err != nil {
+			e := client.ToGenericSwaggerError(err)
+			if e != nil {
+				return fmt.Errorf("Unable get a list the known peers in the network: %w\n%s\n", err,
+					core.ToPrettyJSON(e.Model()))
+			} else {
+				return fmt.Errorf("Unable get a list of known peers in the network: %w\n", err)
+			}
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
