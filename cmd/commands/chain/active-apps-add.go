@@ -31,19 +31,44 @@
 package chain
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
+var chainActiveAppsAddCmdFlags = struct {
+	apps *[]int64
+}{}
+
 // testCmd represents the test command
-var ChainRootCmd = &cobra.Command{
-	Use:   "chain",
-	Short: "Execute chain related APIs calls.",
+var chainActiveAppsAddCmd = &cobra.Command{
+	Use:   "active-apps-add",
+	Short: "Adds a given App to the chain.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireChainId(); err != nil {
+			return err
+		}
+		if len(*chainActiveAppsAddCmdFlags.apps) == 0 {
+			return fmt.Errorf("At least one app must be set.")
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		client, err := core.AppCore.NewClient()
+
+		ret, _, err := client.ChainApi.ChainActiveAppsAdd(nil, flags.Flags.Chain, *chainActiveAppsAddCmdFlags.apps)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
 
 func init() {
-	ChainRootCmd.AddCommand(chainListCmd)
-	ChainRootCmd.AddCommand(chainNewChainCmd)
-	ChainRootCmd.AddCommand(chainDetailsCmd)
-	ChainRootCmd.AddCommand(chainActiveAppsCmd)
-	ChainRootCmd.AddCommand(chainActiveAppsAddCmd)
+	chainActiveAppsAddCmdFlags.apps = chainActiveAppsAddCmd.Flags().Int64SliceP(
+		"app", "a", []int64{}, "Id of the app to add.")
 }
