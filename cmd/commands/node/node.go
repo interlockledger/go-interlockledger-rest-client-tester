@@ -44,4 +44,5 @@ func init() {
 	NodeRootCmd.AddCommand(nodeAPIVersionCmd)
 	NodeRootCmd.AddCommand(nodeDetailsCmd)
 	NodeRootCmd.AddCommand(nodeAppsCmd)
+	NodeRootCmd.AddCommand(nodeInterlockingsCmd)
 }
