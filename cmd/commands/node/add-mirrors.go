@@ -31,21 +31,42 @@
 package node
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
+var nodeAddMirrorsCmdChainsIDs *[]string
+
 // testCmd represents the test command
-var NodeRootCmd = &cobra.Command{
-	Use:   "node",
-	Short: "Node APIs.",
+var nodeAddMirrorsCmd = &cobra.Command{
+	Use:   "add-mirrors",
+	Short: "Get a list of mirrors instances in the network.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if len(*nodeAddMirrorsCmdChainsIDs) == 0 {
+			return fmt.Errorf("At least one chain to mirror is required.")
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		client, err := core.AppCore.NewClient()
+		ret, _, err := client.NodeApi.MirrorAdd(nil, *nodeAddMirrorsCmdChainsIDs)
+		if err != nil {
+			e := client.ToGenericSwaggerError(err)
+			if e != nil {
+				return fmt.Errorf("Unable get a list mirrors in the network: %w\n%s\n", err,
+					core.ToPrettyJSON(e.Model()))
+			} else {
+				return fmt.Errorf("Unable get a list of mirrors in the network: %w\n", err)
+			}
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
 
 func init() {
-	NodeRootCmd.AddCommand(nodeAPIVersionCmd)
-	NodeRootCmd.AddCommand(nodeDetailsCmd)
-	NodeRootCmd.AddCommand(nodeAppsCmd)
-	NodeRootCmd.AddCommand(nodeInterlockingsCmd)
-	NodeRootCmd.AddCommand(nodePeersCmd)
-	NodeRootCmd.AddCommand(nodeMirrorsCmd)
-	NodeRootCmd.AddCommand(nodeAddMirrorsCmd)
+	nodeAddMirrorsCmdChainsIDs = nodeAddMirrorsCmd.Flags().StringArrayP("mirror-chain", "m", []string{}, "ID of the chain to mirror.")
 }
