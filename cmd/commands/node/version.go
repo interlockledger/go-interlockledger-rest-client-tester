@@ -40,7 +40,7 @@ import (
 
 // testCmd represents the test command
 var nodeVersionCmd = &cobra.Command{
-	Use:   "get",
+	Use:   "version",
 	Short: "Get the version of the server.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := core.AppCore.NewClient()
