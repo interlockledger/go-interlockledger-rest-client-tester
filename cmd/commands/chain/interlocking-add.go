@@ -32,20 +32,37 @@ package chain
 
 import (
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
+	"github.com/interlockledger/go-interlockledger-rest-client/client/models"
 )
 
 // testCmd represents the test command
-var ChainRootCmd = &cobra.Command{
-	Use:   "chain",
-	Short: "Execute chain related APIs calls.",
-}
+var chainInterlockingAddCmd = &cobra.Command{
+	Use:   "interlocking-add",
+	Short: "Creates a new interlock.",
+	Long:  "Creates a new interlock. Use a param file like chain-interlock.json to set the new chain parameters.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireParamFile(); err != nil {
+			return err
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		client, err := core.AppCore.NewClient()
 
-func init() {
-	ChainRootCmd.AddCommand(chainListCmd)
-	ChainRootCmd.AddCommand(chainNewChainCmd)
-	ChainRootCmd.AddCommand(chainDetailsCmd)
-	ChainRootCmd.AddCommand(chainActiveAppsCmd)
-	ChainRootCmd.AddCommand(chainActiveAppsAddCmd)
-	ChainRootCmd.AddCommand(chainInterlockingListCmd)
-	ChainRootCmd.AddCommand(chainInterlockingAddCmd)
+		// Load the parameters
+		var params models.ForceInterlockModel
+		err = core.LoadJSONFile(flags.Flags.ParamFile, &params)
+		if err != nil {
+			return err
+		}
+		ret, _, err := client.ChainApi.ChainInterlockingAdd(nil, flags.Flags.Chain, &params)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
