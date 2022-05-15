@@ -1,0 +1,27 @@
+{
+  "additionalApps": [
+    0
+  ],
+  "apiCertificates": [
+    {
+      "name": "string",
+      "permissions": [
+        "string"
+      ],
+      "purposes": [
+        "InvalidKey"
+      ],
+      "certificateInX509": "string"
+    }
+  ],
+  "description": "string",
+  "emergencyClosingKeyPassword": "string",
+  "emergencyClosingKeyStrength": "Normal",
+  "keysAlgorithm": "RSA",
+  "managementKeyPassword": "string",
+  "managementKeyStrength": "Normal",
+  "name": "string",
+  "operatingKeyStrength": "Normal",
+  "parent": "string"
+}
+

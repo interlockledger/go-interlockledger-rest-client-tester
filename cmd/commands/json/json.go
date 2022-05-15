@@ -31,14 +31,17 @@
 package json
 
 import (
-	stdjson "encoding/json"
 	"fmt"
-	"os"
 
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 	"github.com/interlockledger/go-interlockledger-rest-client/crypto"
 	"github.com/spf13/cobra"
 )
+
+var JSONRootCmdFlags = struct {
+	JSONFile       string // JSON file
+	ReaderCertFile string // Reader key
+}{}
 
 // testCmd represents the test command
 var JSONRootCmd = &cobra.Command{
@@ -54,23 +57,17 @@ func init() {
 	JSONRootCmd.AddCommand(jsonAddWithIndirectKeyCmd)
 	JSONRootCmd.AddCommand(jsonAddWithChainKeysCmd)
 
-	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.JSONFile, "json", "", "The JSON file to add. Defaults to \"{\"dummy\": \"DUMMY\"}\"")
-	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.CertFile, "cert", "", "The public key certificate.")
-	JSONRootCmd.PersistentFlags().Int64VarP(&flags.Flags.Id, "id", "i", int64(-1), "The ID of the document. It may be required by some commands.")
-	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.ReaderCertFile, "reader-cert", "", "The certificate file that contains the reader key.")
+	JSONRootCmd.PersistentFlags().StringVar(&JSONRootCmdFlags.JSONFile, "json", "", "The JSON file to add. Defaults to \"{\"dummy\": \"DUMMY\"}\"")
+	JSONRootCmd.PersistentFlags().StringVar(&JSONRootCmdFlags.ReaderCertFile, "reader-cert", "", "The certificate file that contains the reader key.")
 }
 
 func loadJSON() (map[string]any, error) {
 
-	if flags.Flags.JSONFile == "" {
+	if JSONRootCmdFlags.JSONFile == "" {
 		return map[string]any{"dummy": "DUMMY"}, nil
 	}
-	bytes, err := os.ReadFile(flags.Flags.JSONFile)
-	if err != nil {
-		return nil, err
-	}
-	ret := make(map[string]any)
-	err = stdjson.Unmarshal(bytes, &ret)
+	var ret map[string]any
+	err := core.LoadJSONFile(JSONRootCmdFlags.JSONFile, &ret)
 	if err != nil {
 		return nil, err
 	}

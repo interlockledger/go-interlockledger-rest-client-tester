@@ -33,6 +33,7 @@ package core
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 )
 
 // Converts the object o into a formatted JSON. It is used to output JSON
@@ -48,4 +49,13 @@ func ToPrettyJSON(o any) string {
 // Prints the given object as a JSON into stdout.
 func PrintAsJSON(o any) {
 	fmt.Println(ToPrettyJSON(o))
+}
+
+// Loads a JSON file from the file system.
+func LoadJSONFile(file string, value any) error {
+	bin, err := os.ReadFile(file)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bin, value)
 }

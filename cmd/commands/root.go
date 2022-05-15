@@ -59,8 +59,10 @@ func init() {
 	rootCmd.AddCommand(json.JSONRootCmd)
 	rootCmd.AddCommand(node.NodeRootCmd)
 	rootCmd.AddCommand(records.RecordRootCmd)
+	// Adding the parameters used by most commands.
 	rootCmd.PersistentFlags().StringVar(&flags.Flags.ConfigFile, "config", "config.json", "The configuration file.")
 	rootCmd.PersistentFlags().StringVarP(&flags.Flags.Chain, "chain", "c", "", "The ID of the chain. It may be required by some commands.")
+	rootCmd.PersistentFlags().StringVarP(&flags.Flags.ParamFile, "params", "p", "", "A file with the parameters for certain commands.")
 }
 
 // Execute executes the root command.

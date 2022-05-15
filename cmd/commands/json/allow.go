@@ -49,7 +49,7 @@ var jsonAllowCmd = &cobra.Command{
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
 		}
-		if flags.Flags.ReaderCertFile == "" {
+		if JSONRootCmdFlags.ReaderCertFile == "" {
 			return fmt.Errorf("Reader certificate is required.")
 		}
 		if flagContextId == "" {
@@ -59,7 +59,7 @@ var jsonAllowCmd = &cobra.Command{
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		key, err := LoadReaderCertificate(flags.Flags.ReaderCertFile)
+		key, err := LoadReaderCertificate(JSONRootCmdFlags.ReaderCertFile)
 		if err != nil {
 			return err
 		}

@@ -28,31 +28,35 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package flags
+package chain
 
-import "fmt"
+import (
+	"fmt"
 
-var Flags GlobalFlags
+	"github.com/spf13/cobra"
 
-// This struct holds the global flags used by all or most commands.
-type GlobalFlags struct {
-	ConfigFile string // Configuration file
-	Chain      string // Chain ID
-	ParamFile  string // Param file
-}
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
+)
 
-func (f *GlobalFlags) RequireChainId() error {
-	if f.Chain == "" {
-		return fmt.Errorf("chain id is missing.")
-	} else {
+// testCmd represents the test command
+var chainNewChainCmd = &cobra.Command{
+	Use:   "new",
+	Short: "Creates a new chain.",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		client, err := core.AppCore.NewClient()
+		chains, _, err := client.ChainApi.ChainsList(nil)
+		if err != nil {
+			e := client.ToGenericSwaggerError(err)
+			if e != nil {
+				return fmt.Errorf("Unable to create the new chain: %w\n%s\n", err,
+					core.ToPrettyJSON(e.Model()))
+			} else {
+				return fmt.Errorf("Unable to create the new chain: %w\n", err)
+			}
+		}
+		for _, c := range chains {
+			core.PrintAsJSON(c)
+		}
 		return nil
-	}
-}
-
-func (f *GlobalFlags) RequireParamFile() error {
-	if f.ParamFile == "" {
-		return fmt.Errorf("param file is missing.")
-	} else {
-		return nil
-	}
+	},
 }

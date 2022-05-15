@@ -32,11 +32,6 @@
 // IL2 API.
 package core
 
-import (
-	"encoding/json"
-	"os"
-)
-
 type Configuration struct {
 	Loaded   bool   `json:"-"`
 	BasePath string `json:"basePath"`
@@ -53,11 +48,8 @@ func (c *Configuration) Defaults() {
 
 // Loads the configuration from a file.
 func (c *Configuration) Load(file string) error {
-	bin, err := os.ReadFile(file)
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(bin, c)
+	c.Defaults()
+	err := LoadJSONFile(file, c)
 	c.Loaded = err == nil
 	return err
 }

@@ -40,7 +40,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var flagPrivateKey string
+var jsonGetCmdFlags = struct {
+	privateKey string
+	id         int64
+}{}
 
 // testCmd represents the test command
 var jsonGetCmd = &cobra.Command{
@@ -51,14 +54,14 @@ var jsonGetCmd = &cobra.Command{
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
 		}
-		if err := flags.Flags.RequireId(); err != nil {
-			return err
+		if jsonGetCmdFlags.id == -1 {
+			return fmt.Errorf("id is required.")
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := core.AppCore.NewClient()
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsGet(nil, flags.Flags.Chain, flags.Flags.Id)
+		ret, _, err := client.JsonDocumentApi.JsonDocumentsGet(nil, flags.Flags.Chain, jsonGetCmdFlags.id)
 		if err != nil {
 			e := client.ToGenericSwaggerError(err)
 			if e != nil {
@@ -73,8 +76,8 @@ var jsonGetCmd = &cobra.Command{
 		fmt.Println("Encrypted JSON")
 		fmt.Println("==============")
 		core.PrintAsJSON(ret)
-		if flagPrivateKey != "" {
-			privKey, err := crypto.LoadPrivateKey(flagPrivateKey)
+		if jsonGetCmdFlags.privateKey != "" {
+			privKey, err := crypto.LoadPrivateKey(jsonGetCmdFlags.privateKey)
 			if err != nil {
 				return err
 			}
@@ -96,5 +99,6 @@ var jsonGetCmd = &cobra.Command{
 }
 
 func init() {
-	jsonGetCmd.Flags().StringVar(&flagPrivateKey, "private", "", "The reader's private key file. If set, the JSON document will be decrypted.")
+	jsonGetCmd.Flags().Int64VarP(&jsonGetCmdFlags.id, "id", "i", int64(-1), "The ID of the document. It may be required by some commands.")
+	jsonGetCmd.Flags().StringVar(&jsonGetCmdFlags.privateKey, "private", "", "The reader's private key file. If set, the JSON document will be decrypted.")
 }
