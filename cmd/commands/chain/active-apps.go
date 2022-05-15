@@ -32,17 +32,29 @@ package chain
 
 import (
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
 // testCmd represents the test command
-var ChainRootCmd = &cobra.Command{
-	Use:   "chain",
-	Short: "Execute chain related APIs calls.",
-}
+var chainActiveAppsCmd = &cobra.Command{
+	Use:   "active-apps",
+	Short: "List the active apps in the given chain.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireChainId(); err != nil {
+			return err
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		client, err := core.AppCore.NewClient()
 
-func init() {
-	ChainRootCmd.AddCommand(chainListCmd)
-	ChainRootCmd.AddCommand(chainNewChainCmd)
-	ChainRootCmd.AddCommand(chainDetailsCmd)
-	ChainRootCmd.AddCommand(chainActiveAppsCmd)
+		ret, _, err := client.ChainApi.ChainActiveAppsList(nil, flags.Flags.Chain)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
