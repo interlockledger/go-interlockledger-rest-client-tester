@@ -31,20 +31,30 @@
 package node
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
 // testCmd represents the test command
-var NodeRootCmd = &cobra.Command{
-	Use:   "node",
-	Short: "Node APIs.",
-}
-
-func init() {
-	NodeRootCmd.AddCommand(nodeAPIVersionCmd)
-	NodeRootCmd.AddCommand(nodeDetailsCmd)
-	NodeRootCmd.AddCommand(nodeAppsCmd)
-	NodeRootCmd.AddCommand(nodeInterlockingsCmd)
-	NodeRootCmd.AddCommand(nodePeersCmd)
-	NodeRootCmd.AddCommand(nodeMirrorsCmd)
+var nodeMirrorsCmd = &cobra.Command{
+	Use:   "mirrors",
+	Short: "Get a list of mirrors instances in the network.",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		client, err := core.AppCore.NewClient()
+		ret, _, err := client.NodeApi.MirrorsList(nil)
+		if err != nil {
+			e := client.ToGenericSwaggerError(err)
+			if e != nil {
+				return fmt.Errorf("Unable get a list mirrors in the network: %w\n%s\n", err,
+					core.ToPrettyJSON(e.Model()))
+			} else {
+				return fmt.Errorf("Unable get a list of mirrors in the network: %w\n", err)
+			}
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
