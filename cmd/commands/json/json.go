@@ -52,6 +52,7 @@ func init() {
 	JSONRootCmd.AddCommand(jsonAddWithKeyCmd)
 	JSONRootCmd.AddCommand(jsonAllowCmd)
 	JSONRootCmd.AddCommand(jsonAddWithIndirectKeyCmd)
+	JSONRootCmd.AddCommand(jsonAddWithChainKeysCmd)
 
 	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.JSONFile, "json", "", "The JSON file to add. Defaults to \"{\"dummy\": \"DUMMY\"}\"")
 	JSONRootCmd.PersistentFlags().StringVar(&flags.Flags.CertFile, "cert", "", "The public key certificate.")
