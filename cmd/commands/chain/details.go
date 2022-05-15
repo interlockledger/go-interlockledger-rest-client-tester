@@ -40,8 +40,7 @@ import (
 // testCmd represents the test command
 var chainDetailsCmd = &cobra.Command{
 	Use:   "details",
-	Short: "Creates a new chain.",
-	Long:  "Creates a new chain. Use a param file like new-chain-request-example.json to set the new chain parameters.",
+	Short: "Get the details of the given chain.",
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
