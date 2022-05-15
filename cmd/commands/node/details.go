@@ -48,10 +48,10 @@ var nodeDetailsCmd = &cobra.Command{
 		if err != nil {
 			e := client.ToGenericSwaggerError(err)
 			if e != nil {
-				return fmt.Errorf("Unable get the version of the node: %w\n%s\n", err,
+				return fmt.Errorf("Unable get the details of the node: %w\n%s\n", err,
 					core.ToPrettyJSON(e.Model()))
 			} else {
-				return fmt.Errorf("Unable get the version of the node: %w\n", err)
+				return fmt.Errorf("Unable get the details of the node: %w\n", err)
 			}
 		}
 		core.PrintAsJSON(ret)
