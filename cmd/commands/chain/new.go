@@ -58,7 +58,7 @@ var chainNewChainCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		ret, _, err := client.ChainApi.ChainCreate(nil, params)
+		ret, _, err := client.ChainApi.ChainCreate(nil, &params)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}
