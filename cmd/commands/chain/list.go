@@ -31,8 +31,6 @@
 package chain
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
@@ -46,13 +44,7 @@ var chainListCmd = &cobra.Command{
 		client, err := core.AppCore.NewClient()
 		chains, _, err := client.ChainApi.ChainsList(nil)
 		if err != nil {
-			e := client.ToGenericSwaggerError(err)
-			if e != nil {
-				return fmt.Errorf("Unable list the chains: %w\n%s\n", err,
-					core.ToPrettyJSON(e.Model()))
-			} else {
-				return fmt.Errorf("Unable list the chains: %w\n", err)
-			}
+			return core.FormatRequestResponseCommandError(err)
 		}
 		for _, c := range chains {
 			core.PrintAsJSON(c)

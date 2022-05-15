@@ -63,14 +63,7 @@ var jsonGetCmd = &cobra.Command{
 		client, err := core.AppCore.NewClient()
 		ret, _, err := client.JsonDocumentApi.JsonDocumentsGet(nil, flags.Flags.Chain, jsonGetCmdFlags.id)
 		if err != nil {
-			e := client.ToGenericSwaggerError(err)
-			if e != nil {
-				return fmt.Errorf("Unable get the JSON document: %w\n%s\n", err,
-					core.ToPrettyJSON(e.Model()))
-			} else {
-				return fmt.Errorf("Unable get the JSON document: %w\n", err)
-			}
-
+			return core.FormatRequestResponseCommandError(err)
 		}
 		fmt.Println()
 		fmt.Println("Encrypted JSON")

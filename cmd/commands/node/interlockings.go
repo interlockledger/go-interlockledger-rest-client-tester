@@ -31,8 +31,6 @@
 package node
 
 import (
-	"fmt"
-
 	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
 
@@ -76,13 +74,7 @@ var nodeInterlockingsCmd = &cobra.Command{
 		}
 		ret, _, err := apiClient.NodeApi.InterlockingsList(nil, flags.Flags.Chain, &optionalParams)
 		if err != nil {
-			e := apiClient.ToGenericSwaggerError(err)
-			if e != nil {
-				return fmt.Errorf("Unable get the API version of the node: %w\n%s\n", err,
-					core.ToPrettyJSON(e.Model()))
-			} else {
-				return fmt.Errorf("Unable get the API version of the node: %w\n", err)
-			}
+			return core.FormatRequestResponseCommandError(err)
 		}
 		core.PrintAsJSON(ret)
 		return nil

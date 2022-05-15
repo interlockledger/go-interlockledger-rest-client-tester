@@ -54,13 +54,7 @@ var nodeAddMirrorsCmd = &cobra.Command{
 		client, err := core.AppCore.NewClient()
 		ret, _, err := client.NodeApi.MirrorAdd(nil, *nodeAddMirrorsCmdChainsIDs)
 		if err != nil {
-			e := client.ToGenericSwaggerError(err)
-			if e != nil {
-				return fmt.Errorf("Unable get a list mirrors in the network: %w\n%s\n", err,
-					core.ToPrettyJSON(e.Model()))
-			} else {
-				return fmt.Errorf("Unable get a list of mirrors in the network: %w\n", err)
-			}
+			return core.FormatRequestResponseCommandError(err)
 		}
 		core.PrintAsJSON(ret)
 		return nil

@@ -42,4 +42,5 @@ var ChainRootCmd = &cobra.Command{
 
 func init() {
 	ChainRootCmd.AddCommand(chainListCmd)
+	ChainRootCmd.AddCommand(chainNewChainCmd)
 }

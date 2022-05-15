@@ -34,6 +34,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+
+	"github.com/interlockledger/go-interlockledger-rest-client/client"
 )
 
 // Converts the object o into a formatted JSON. It is used to output JSON
@@ -58,4 +60,21 @@ func LoadJSONFile(file string, value any) error {
 		return err
 	}
 	return json.Unmarshal(bin, value)
+}
+
+// Formats the response in a human readable format that will help with the
+// interpretation of the results.
+func FormatRequestResponseCommandError(err error) error {
+	switch err.(type) {
+	case *client.GenericSwaggerError:
+		e := err.(*client.GenericSwaggerError)
+		return fmt.Errorf("Request failed with the error: %w\n%s", err,
+			ToPrettyJSON(e.Model()))
+	case client.GenericSwaggerError:
+		e := err.(client.GenericSwaggerError)
+		return fmt.Errorf("Request failed with the error: %w\n%s", err,
+			ToPrettyJSON(e.Model()))
+	default:
+		return fmt.Errorf("Request failed with the error: %w", err)
+	}
 }

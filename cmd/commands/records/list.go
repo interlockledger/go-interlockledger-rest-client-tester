@@ -31,8 +31,6 @@
 package records
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
@@ -46,7 +44,7 @@ var recordListCmd = &cobra.Command{
 		client, err := core.AppCore.NewClient()
 		chains, _, err := client.ChainApi.ChainsList(nil)
 		if err != nil {
-			return fmt.Errorf("Unable to list the chains: %w\n", err)
+			return core.FormatRequestResponseCommandError(err)
 		}
 		for _, c := range chains {
 			core.PrintAsJSON(c)

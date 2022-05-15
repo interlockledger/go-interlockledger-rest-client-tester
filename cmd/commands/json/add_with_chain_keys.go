@@ -74,13 +74,7 @@ var jsonAddWithChainKeysCmd = &cobra.Command{
 		}
 		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithChainKeys(nil, flags.Flags.Chain, *flagChainKeyRefs, jsonDoc)
 		if err != nil {
-			e := client.ToGenericSwaggerError(err)
-			if e != nil {
-				return fmt.Errorf("Unable add the JSON document: %w\n%s\n", err,
-					core.ToPrettyJSON(e.Model()))
-			} else {
-				return fmt.Errorf("Unable add the JSON document: %w\n", err)
-			}
+			return core.FormatRequestResponseCommandError(err)
 		}
 		fmt.Println()
 		fmt.Println("Result:")

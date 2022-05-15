@@ -31,32 +31,38 @@
 package chain
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
+	"github.com/interlockledger/go-interlockledger-rest-client/client/models"
 )
 
 // testCmd represents the test command
 var chainNewChainCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Creates a new chain.",
+	Long:  "Creates a new chain. Use a param file like new-chain-request-example.json to set the new chain parameters.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireParamFile(); err != nil {
+			return err
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := core.AppCore.NewClient()
-		chains, _, err := client.ChainApi.ChainsList(nil)
+
+		// Load the parameters
+		var params models.ChainCreatedModel
+		err = core.LoadJSONFile(flags.Flags.ParamFile, &params)
 		if err != nil {
-			e := client.ToGenericSwaggerError(err)
-			if e != nil {
-				return fmt.Errorf("Unable to create the new chain: %w\n%s\n", err,
-					core.ToPrettyJSON(e.Model()))
-			} else {
-				return fmt.Errorf("Unable to create the new chain: %w\n", err)
-			}
+			return err
 		}
-		for _, c := range chains {
-			core.PrintAsJSON(c)
+		ret, _, err := client.ChainApi.ChainCreate(nil, params)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
 		}
+		core.PrintAsJSON(ret)
 		return nil
 	},
 }
