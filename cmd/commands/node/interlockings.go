@@ -31,7 +31,6 @@
 package node
 
 import (
-	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
 
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
@@ -59,9 +58,7 @@ var nodeInterlockingsCmd = &cobra.Command{
 		apiClient, err := core.AppCore.NewClient()
 
 		var optionalParams client.NodeApiInterlockingsListOpts
-		if nodeInterlockingsFlags.LastKnownBlock >= 0 {
-			optionalParams.LastKnownBlock = optional.NewInt64(nodeInterlockingsFlags.LastKnownBlock)
-		}
+		optionalParams.LastKnownBlock = flags.OptionalInt64(nodeInterlockingsFlags.LastKnownBlock)
 		optionalParams.LastToFirst = flags.Flags.OptionalLastToFirst()
 		optionalParams.Page = flags.Flags.OptionalPage()
 		optionalParams.PageSize = flags.Flags.OptionalPageSize()

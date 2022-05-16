@@ -30,36 +30,20 @@
 
 package flags
 
-import (
-	"github.com/antihax/optional"
-	"github.com/spf13/pflag"
-)
+import "github.com/antihax/optional"
 
-// This struct holds the global flags used by all or most commands.
-type PagingFlags struct {
-	// Paging
-	Page        int32
-	PageSize    int32
-	LastToFirst bool
+func OptionalInt32(v int32) optional.Int32 {
+	if v != -1 {
+		return optional.NewInt32(v)
+	} else {
+		return optional.EmptyInt32()
+	}
 }
 
-func (f *PagingFlags) RegisterPagingParams(flagSet *pflag.FlagSet) {
-	flagSet.Int32Var(&f.Page, "page", -1, "The page.")
-	flagSet.Int32Var(&f.PageSize, "page-size", -1, "The page size.")
-}
-
-func (f *PagingFlags) RegisterPagingReverseParams(flagSet *pflag.FlagSet) {
-	flagSet.BoolVar(&f.LastToFirst, "last-to-first", false, "Invert the list order.")
-}
-
-func (f *PagingFlags) OptionalPage() optional.Int32 {
-	return OptionalInt32(f.Page)
-}
-
-func (f *PagingFlags) OptionalPageSize() optional.Int32 {
-	return OptionalInt32(f.PageSize)
-}
-
-func (f *PagingFlags) OptionalLastToFirst() optional.Bool {
-	return optional.NewBool(f.LastToFirst)
+func OptionalInt64(v int64) optional.Int64 {
+	if v != -1 {
+		return optional.NewInt64(v)
+	} else {
+		return optional.EmptyInt64()
+	}
 }

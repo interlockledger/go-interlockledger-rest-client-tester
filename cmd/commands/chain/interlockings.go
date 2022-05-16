@@ -31,7 +31,6 @@
 package chain
 
 import (
-	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
 
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
@@ -57,9 +56,7 @@ var chainInterlockingListCmd = &cobra.Command{
 		apiClient, err := core.AppCore.NewClient()
 
 		var options client.ChainApiChainInterlockingsListOpts
-		if chainInterlockingListCmdFlags.countFromLast != -1 {
-			options.HowManyFromLast = optional.NewInt32(chainInterlockingListCmdFlags.countFromLast)
-		}
+		options.HowManyFromLast = flags.OptionalInt32(chainInterlockingListCmdFlags.countFromLast)
 		options.Page = flags.Flags.OptionalPage()
 		options.PageSize = flags.Flags.OptionalPageSize()
 

@@ -28,38 +28,30 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package flags
+package records
 
 import (
 	"github.com/antihax/optional"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/spf13/pflag"
 )
 
-// This struct holds the global flags used by all or most commands.
-type PagingFlags struct {
-	// Paging
-	Page        int32
-	PageSize    int32
-	LastToFirst bool
+type RecordList struct {
+	First int64
+	Last  int64
 }
 
-func (f *PagingFlags) RegisterPagingParams(flagSet *pflag.FlagSet) {
-	flagSet.Int32Var(&f.Page, "page", -1, "The page.")
-	flagSet.Int32Var(&f.PageSize, "page-size", -1, "The page size.")
+var recordList RecordList
+
+func (f *RecordList) RegisterRecordListParams(flagSet *pflag.FlagSet) {
+	flagSet.Int64Var(&f.First, "first", -1, "Serial of the first block.")
+	flagSet.Int64Var(&f.Last, "last", -1, "Serial of the last block.")
 }
 
-func (f *PagingFlags) RegisterPagingReverseParams(flagSet *pflag.FlagSet) {
-	flagSet.BoolVar(&f.LastToFirst, "last-to-first", false, "Invert the list order.")
+func (f *RecordList) OptionalFirst() optional.Int64 {
+	return flags.OptionalInt64(f.First)
 }
 
-func (f *PagingFlags) OptionalPage() optional.Int32 {
-	return OptionalInt32(f.Page)
-}
-
-func (f *PagingFlags) OptionalPageSize() optional.Int32 {
-	return OptionalInt32(f.PageSize)
-}
-
-func (f *PagingFlags) OptionalLastToFirst() optional.Bool {
-	return optional.NewBool(f.LastToFirst)
+func (f *RecordList) OptionalLast() optional.Int64 {
+	return flags.OptionalInt64(f.Last)
 }

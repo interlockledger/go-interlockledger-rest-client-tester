@@ -31,18 +31,12 @@
 package records
 
 import (
-	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
 
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 	"github.com/interlockledger/go-interlockledger-rest-client/client"
 )
-
-var recordListCmdFlags = struct {
-	first int64
-	last  int64
-}{}
 
 // testCmd represents the test command
 var recordListCmd = &cobra.Command{
@@ -58,12 +52,8 @@ var recordListCmd = &cobra.Command{
 		apiClient, err := core.AppCore.NewClient()
 
 		var options client.RecordApiRecordsListOpts
-		if recordListCmdFlags.first != -1 {
-			options.FirstSerial = optional.NewInt64(recordListCmdFlags.first)
-		}
-		if recordListCmdFlags.last != -1 {
-			options.LastSerial = optional.NewInt64(recordListCmdFlags.last)
-		}
+		options.FirstSerial = recordList.OptionalFirst()
+		options.LastSerial = recordList.OptionalLast()
 		options.Page = flags.Flags.OptionalPage()
 		options.PageSize = flags.Flags.OptionalPageSize()
 		options.LastToFirst = flags.Flags.OptionalLastToFirst()
@@ -77,8 +67,7 @@ var recordListCmd = &cobra.Command{
 }
 
 func init() {
-	recordListCmd.Flags().Int64Var(&recordListCmdFlags.first, "first", -1, "Serial of the first record.")
-	recordListCmd.Flags().Int64Var(&recordListCmdFlags.last, "last", -1, "Serial of the last record.")
+	recordList.RegisterRecordListParams(recordListCmd.Flags())
 	flags.Flags.RegisterPagingParams(recordListCmd.Flags())
 	flags.Flags.RegisterPagingReverseParams(recordListCmd.Flags())
 }
