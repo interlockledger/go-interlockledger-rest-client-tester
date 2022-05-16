@@ -49,6 +49,7 @@ func init() {
 	RecordRootCmd.AddCommand(recordGetJSONCmd)
 	RecordRootCmd.AddCommand(recordQueryJSONCmd)
 	RecordRootCmd.AddCommand(recordNewCmd)
+	RecordRootCmd.AddCommand(recordNewJSONCmd)
 
 	flags.Flags.RegisterChainIdParameter(RecordRootCmd.PersistentFlags())
 }
