@@ -47,3 +47,11 @@ func OptionalInt64(v int64) optional.Int64 {
 		return optional.EmptyInt64()
 	}
 }
+
+func OptionalString(v string) optional.String {
+	if v != "" {
+		return optional.NewString(v)
+	} else {
+		return optional.EmptyString()
+	}
+}

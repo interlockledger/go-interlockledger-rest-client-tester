@@ -36,22 +36,40 @@ import (
 	"github.com/spf13/pflag"
 )
 
-type RecordList struct {
-	First int64
-	Last  int64
+type RecordFlags struct {
+	First   int64
+	Last    int64
+	HowMany int64
+	Query   string
 }
 
-var recordList RecordList
+var recordFlags RecordFlags
 
-func (f *RecordList) RegisterRecordListParams(flagSet *pflag.FlagSet) {
+func (f *RecordFlags) RegisterRecordListParams(flagSet *pflag.FlagSet) {
 	flagSet.Int64Var(&f.First, "first", -1, "Serial of the first block.")
 	flagSet.Int64Var(&f.Last, "last", -1, "Serial of the last block.")
 }
 
-func (f *RecordList) OptionalFirst() optional.Int64 {
+func (f *RecordFlags) RegisterRecordHowManyParams(flagSet *pflag.FlagSet) {
+	flagSet.Int64Var(&f.HowMany, "how-many", -1, "Maximum number of records to return.")
+}
+
+func (f *RecordFlags) RegisterQueryParams(flagSet *pflag.FlagSet) {
+	flagSet.StringVarP(&f.Query, "query", "q", "", "InterlockQL query.")
+}
+
+func (f *RecordFlags) OptionalFirst() optional.Int64 {
 	return flags.OptionalInt64(f.First)
 }
 
-func (f *RecordList) OptionalLast() optional.Int64 {
+func (f *RecordFlags) OptionalLast() optional.Int64 {
 	return flags.OptionalInt64(f.Last)
+}
+
+func (f *RecordFlags) OptionalHowMany() optional.Int64 {
+	return flags.OptionalInt64(f.Last)
+}
+
+func (f *RecordFlags) OptionalQuery() optional.String {
+	return flags.OptionalString(f.Query)
 }

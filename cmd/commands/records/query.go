@@ -31,21 +31,45 @@
 package records
 
 import (
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
+	"github.com/interlockledger/go-interlockledger-rest-client/client"
 )
 
 // testCmd represents the test command
-var RecordRootCmd = &cobra.Command{
-	Use:   "record",
-	Short: "Execute record related APIs calls.",
+var recordQueryCmd = &cobra.Command{
+	Use:   "query",
+	Short: "Query using InterlockQL.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireChainId(); err != nil {
+			return err
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		apiClient, err := core.AppCore.NewClient()
+
+		var options client.RecordApiRecordsQueryOpts
+		options.QueryAsInterlockQL = recordFlags.OptionalQuery()
+		options.HowMany = recordFlags.OptionalHowMany()
+		options.Page = flags.Flags.OptionalPage()
+		options.PageSize = flags.Flags.OptionalPageSize()
+		options.LastToFirst = flags.Flags.OptionalLastToFirst()
+		ret, _, err := apiClient.RecordApi.RecordsQuery(nil, flags.Flags.ChainId, &options)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
 
 func init() {
-	RecordRootCmd.AddCommand(recordListCmd)
-	RecordRootCmd.AddCommand(recordGetCmd)
-	RecordRootCmd.AddCommand(recordQueryCmd)
-	RecordRootCmd.AddCommand(recordListJSONCmd)
-
-	flags.Flags.RegisterChainIdParameter(RecordRootCmd.PersistentFlags())
+	recordFlags.RegisterRecordListParams(recordQueryCmd.Flags())
+	recordFlags.RegisterQueryParams(recordQueryCmd.Flags())
+	recordFlags.RegisterRecordHowManyParams(recordQueryCmd.Flags())
+	flags.Flags.RegisterPagingParams(recordQueryCmd.Flags())
+	flags.Flags.RegisterPagingReverseParams(recordQueryCmd.Flags())
 }

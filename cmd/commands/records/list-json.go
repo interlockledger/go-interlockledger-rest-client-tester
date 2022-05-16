@@ -31,21 +31,43 @@
 package records
 
 import (
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
+	"github.com/interlockledger/go-interlockledger-rest-client/client"
 )
 
 // testCmd represents the test command
-var RecordRootCmd = &cobra.Command{
-	Use:   "record",
-	Short: "Execute record related APIs calls.",
+var recordListJSONCmd = &cobra.Command{
+	Use:   "list-json",
+	Short: "List the chains on this node.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireChainId(); err != nil {
+			return err
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		apiClient, err := core.AppCore.NewClient()
+
+		var options client.RecordApiRecordsListAsJsonOpts
+		options.FirstSerial = recordFlags.OptionalFirst()
+		options.LastSerial = recordFlags.OptionalLast()
+		options.Page = flags.Flags.OptionalPage()
+		options.PageSize = flags.Flags.OptionalPageSize()
+		options.LastToFirst = flags.Flags.OptionalLastToFirst()
+		ret, _, err := apiClient.RecordApi.RecordsListAsJson(nil, flags.Flags.ChainId, &options)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
 
 func init() {
-	RecordRootCmd.AddCommand(recordListCmd)
-	RecordRootCmd.AddCommand(recordGetCmd)
-	RecordRootCmd.AddCommand(recordQueryCmd)
-	RecordRootCmd.AddCommand(recordListJSONCmd)
-
-	flags.Flags.RegisterChainIdParameter(RecordRootCmd.PersistentFlags())
+	recordFlags.RegisterRecordListParams(recordListJSONCmd.Flags())
+	flags.Flags.RegisterPagingParams(recordListJSONCmd.Flags())
+	flags.Flags.RegisterPagingReverseParams(recordListJSONCmd.Flags())
 }

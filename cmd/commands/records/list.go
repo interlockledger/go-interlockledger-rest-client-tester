@@ -52,8 +52,8 @@ var recordListCmd = &cobra.Command{
 		apiClient, err := core.AppCore.NewClient()
 
 		var options client.RecordApiRecordsListOpts
-		options.FirstSerial = recordList.OptionalFirst()
-		options.LastSerial = recordList.OptionalLast()
+		options.FirstSerial = recordFlags.OptionalFirst()
+		options.LastSerial = recordFlags.OptionalLast()
 		options.Page = flags.Flags.OptionalPage()
 		options.PageSize = flags.Flags.OptionalPageSize()
 		options.LastToFirst = flags.Flags.OptionalLastToFirst()
@@ -67,7 +67,7 @@ var recordListCmd = &cobra.Command{
 }
 
 func init() {
-	recordList.RegisterRecordListParams(recordListCmd.Flags())
+	recordFlags.RegisterRecordListParams(recordListCmd.Flags())
 	flags.Flags.RegisterPagingParams(recordListCmd.Flags())
 	flags.Flags.RegisterPagingReverseParams(recordListCmd.Flags())
 }
