@@ -28,46 +28,28 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package commands
+package docs
 
 import (
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/chain"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/json"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
-
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/docs"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/node"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/records"
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
-var (
-	// Used for flags.
-	rootCmd = &cobra.Command{
-		Use:   "IL2 Go REST Client Tester",
-		Short: "Test program for the IL2 Go REST Client",
-		Long:  "This is a very simple test program for the IL2 Go REST Client.",
-		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			return core.AppCore.LoadConfig(flags.Flags.ConfigFile)
-		},
-	}
-)
-
-func init() {
-
-	rootCmd.AddCommand(chain.ChainRootCmd)
-	rootCmd.AddCommand(json.JSONRootCmd)
-	rootCmd.AddCommand(node.NodeRootCmd)
-	rootCmd.AddCommand(records.RecordRootCmd)
-	rootCmd.AddCommand(docs.DocsRootCmd)
-
-	// Adding the parameters used by most commands.
-	rootCmd.PersistentFlags().StringVar(&flags.Flags.ConfigFile, "config", "config.json", "The configuration file.")
-	//rootCmd.PersistentFlags().StringVarP(&flags.Flags.ParamFile, "params", "p", "", "A file with the parameters for certain commands.")
-}
-
-// Execute executes the root command.
-func Execute() error {
-	return rootCmd.Execute()
+// testCmd represents the test command
+var docsGetCmd = &cobra.Command{
+	Use:   "config",
+	Short: "Get the configuration.",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
+		ret, _, err := apiClient.DocumentsApi.DocumentsGetConfig(nil)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
