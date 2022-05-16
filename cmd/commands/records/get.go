@@ -31,16 +31,42 @@
 package records
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
+var recordGetCmdFlags = struct {
+	id int64
+}{}
+
 // testCmd represents the test command
-var RecordRootCmd = &cobra.Command{
-	Use:   "record",
-	Short: "Execute record related APIs calls.",
+var recordGetCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Get a given record.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireChainId(); err != nil {
+			return err
+		}
+		if recordGetCmdFlags.id == -1 {
+			return fmt.Errorf("id is required.")
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		apiClient, err := core.AppCore.NewClient()
+		ret, _, err := apiClient.RecordApi.RecordGet(nil, flags.Flags.Chain, recordGetCmdFlags.id)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
 
 func init() {
-	RecordRootCmd.AddCommand(recordListCmd)
-	RecordRootCmd.AddCommand(recordGetCmd)
+	recordGetCmd.Flags().Int64VarP(&recordGetCmdFlags.id, "id", "i", -1, "Id of the block.")
 }

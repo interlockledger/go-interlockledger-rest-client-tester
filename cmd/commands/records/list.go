@@ -31,24 +31,63 @@
 package records
 
 import (
+	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
 
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
+	"github.com/interlockledger/go-interlockledger-rest-client/client"
 )
+
+var recordListCmdFlags = struct {
+	first       int64
+	last        int64
+	page        int32
+	pageSize    int32
+	lastToFirst bool
+}{}
 
 // testCmd represents the test command
 var recordListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List the chains on this node.",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := core.AppCore.NewClient()
-		chains, _, err := client.ChainApi.ChainsList(nil)
-		if err != nil {
-			return core.FormatRequestResponseCommandError(err)
-		}
-		for _, c := range chains {
-			core.PrintAsJSON(c)
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireChainId(); err != nil {
+			return err
 		}
 		return nil
 	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		apiClient, err := core.AppCore.NewClient()
+
+		var options client.RecordApiRecordsListOpts
+		if recordListCmdFlags.first != -1 {
+			options.FirstSerial = optional.NewInt64(recordListCmdFlags.first)
+		}
+		if recordListCmdFlags.last != -1 {
+			options.LastSerial = optional.NewInt64(recordListCmdFlags.last)
+		}
+		if recordListCmdFlags.page != -1 {
+			options.Page = optional.NewInt32(recordListCmdFlags.page)
+		}
+		if recordListCmdFlags.pageSize != -1 {
+			options.PageSize = optional.NewInt32(recordListCmdFlags.pageSize)
+		}
+		options.LastToFirst = optional.NewBool(recordListCmdFlags.lastToFirst)
+
+		ret, _, err := apiClient.RecordApi.RecordsList(nil, flags.Flags.Chain, &options)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
+}
+
+func init() {
+	recordListCmd.Flags().Int64Var(&recordListCmdFlags.first, "first", -1, "Serial of the first record.")
+	recordListCmd.Flags().Int64Var(&recordListCmdFlags.last, "last", -1, "Serial of the last record.")
+	recordListCmd.Flags().Int32Var(&recordListCmdFlags.page, "page", -1, "Page to return.")
+	recordListCmd.Flags().Int32Var(&recordListCmdFlags.pageSize, "page-size", -1, "Page size.")
+	recordListCmd.Flags().BoolVar(&recordListCmdFlags.lastToFirst, "last-to-first", false, "If true, reverses the order of the listing.")
 }
