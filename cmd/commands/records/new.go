@@ -31,24 +31,44 @@
 package records
 
 import (
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
+	"github.com/interlockledger/go-interlockledger-rest-client/client/models"
 )
 
 // testCmd represents the test command
-var RecordRootCmd = &cobra.Command{
-	Use:   "record",
-	Short: "Execute record related APIs calls.",
+var recordNewCmd = &cobra.Command{
+	Use:   "new",
+	Short: "Creates a new record. Use a param file like record-new.json to set the new chain parameters.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireChainId(); err != nil {
+			return err
+		}
+		if err := flags.Flags.RequireParamFile(); err != nil {
+			return err
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		apiClient, err := core.AppCore.NewClient()
+		// Load the parameters
+		var params models.NewRecordModel
+		err = core.LoadJSONFile(flags.Flags.ParamFile, &params)
+		if err != nil {
+			return err
+		}
+		ret, _, err := apiClient.RecordApi.RecordAdd(nil, flags.Flags.ChainId, &params)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
 
 func init() {
-	RecordRootCmd.AddCommand(recordListCmd)
-	RecordRootCmd.AddCommand(recordGetCmd)
-	RecordRootCmd.AddCommand(recordQueryCmd)
-	RecordRootCmd.AddCommand(recordListJSONCmd)
-	RecordRootCmd.AddCommand(recordGetJSONCmd)
-	RecordRootCmd.AddCommand(recordQueryJSONCmd)
-	RecordRootCmd.AddCommand(recordNewCmd)
-
-	flags.Flags.RegisterChainIdParameter(RecordRootCmd.PersistentFlags())
+	recordFlags.RegisterIdParams(recordNewCmd.Flags())
+	flags.Flags.RegisterParamFileParameter(recordNewCmd.Flags())
 }

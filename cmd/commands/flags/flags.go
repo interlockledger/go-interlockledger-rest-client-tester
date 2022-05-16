@@ -65,3 +65,7 @@ func (f *GlobalFlags) RequireParamFile() error {
 func (f *GlobalFlags) RegisterChainIdParameter(flagSet *pflag.FlagSet) {
 	flagSet.StringVarP(&f.ChainId, "chain", "c", "", "The ID of the chain.")
 }
+
+func (f *GlobalFlags) RegisterParamFileParameter(flagSet *pflag.FlagSet) {
+	flagSet.StringVarP(&f.ParamFile, "param", "p", "", "Parameter file.")
+}

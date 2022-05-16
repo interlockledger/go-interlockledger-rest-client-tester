@@ -39,10 +39,6 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
-var recordGetCmdFlags = struct {
-	id int64
-}{}
-
 // testCmd represents the test command
 var recordGetCmd = &cobra.Command{
 	Use:   "get",
@@ -51,14 +47,14 @@ var recordGetCmd = &cobra.Command{
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
 		}
-		if recordGetCmdFlags.id == -1 {
+		if recordFlags.Id == -1 {
 			return fmt.Errorf("id is required.")
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		apiClient, err := core.AppCore.NewClient()
-		ret, _, err := apiClient.RecordApi.RecordGet(nil, flags.Flags.ChainId, recordGetCmdFlags.id)
+		ret, _, err := apiClient.RecordApi.RecordGet(nil, flags.Flags.ChainId, recordFlags.Id)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}
@@ -68,5 +64,5 @@ var recordGetCmd = &cobra.Command{
 }
 
 func init() {
-	recordGetCmd.Flags().Int64VarP(&recordGetCmdFlags.id, "id", "i", -1, "Id of the block.")
+	recordFlags.RegisterIdParams(recordGetCmd.Flags())
 }

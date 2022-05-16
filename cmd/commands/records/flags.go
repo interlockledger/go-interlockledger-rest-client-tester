@@ -41,6 +41,7 @@ type RecordFlags struct {
 	Last    int64
 	HowMany int64
 	Query   string
+	Id      int64
 }
 
 var recordFlags RecordFlags
@@ -56,6 +57,10 @@ func (f *RecordFlags) RegisterRecordHowManyParams(flagSet *pflag.FlagSet) {
 
 func (f *RecordFlags) RegisterQueryParams(flagSet *pflag.FlagSet) {
 	flagSet.StringVarP(&f.Query, "query", "q", "", "InterlockQL query.")
+}
+
+func (f *RecordFlags) RegisterIdParams(flagSet *pflag.FlagSet) {
+	flagSet.Int64VarP(&f.Id, "id", "i", -1, "Id of the block.")
 }
 
 func (f *RecordFlags) OptionalFirst() optional.Int64 {

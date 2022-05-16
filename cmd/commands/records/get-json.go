@@ -31,24 +31,42 @@
 package records
 
 import (
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"fmt"
+
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
+var recordGetJSONCmdFlags = struct {
+	id int64
+}{}
+
 // testCmd represents the test command
-var RecordRootCmd = &cobra.Command{
-	Use:   "record",
-	Short: "Execute record related APIs calls.",
+var recordGetJSONCmd = &cobra.Command{
+	Use:   "get-json",
+	Short: "Get a given record.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireChainId(); err != nil {
+			return err
+		}
+		if recordFlags.Id == -1 {
+			return fmt.Errorf("id is required.")
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		apiClient, err := core.AppCore.NewClient()
+		ret, _, err := apiClient.RecordApi.RecordGetAsJson(nil, flags.Flags.ChainId, recordFlags.Id)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
 
 func init() {
-	RecordRootCmd.AddCommand(recordListCmd)
-	RecordRootCmd.AddCommand(recordGetCmd)
-	RecordRootCmd.AddCommand(recordQueryCmd)
-	RecordRootCmd.AddCommand(recordListJSONCmd)
-	RecordRootCmd.AddCommand(recordGetJSONCmd)
-	RecordRootCmd.AddCommand(recordQueryJSONCmd)
-	RecordRootCmd.AddCommand(recordNewCmd)
-
-	flags.Flags.RegisterChainIdParameter(RecordRootCmd.PersistentFlags())
+	recordFlags.RegisterIdParams(recordGetJSONCmd.Flags())
 }
