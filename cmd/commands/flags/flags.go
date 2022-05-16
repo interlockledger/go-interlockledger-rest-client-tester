@@ -40,6 +40,7 @@ var Flags GlobalFlags
 
 // This struct holds the global flags used by all or most commands.
 type GlobalFlags struct {
+	PagingFlags
 	ConfigFile string // Configuration file
 	ChainId    string // Chain ID
 	ParamFile  string // Param file

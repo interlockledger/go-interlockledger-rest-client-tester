@@ -42,9 +42,6 @@ import (
 var (
 	nodeInterlockingsFlags = struct {
 		LastKnownBlock int64
-		LastToFirst    bool
-		Page           int32
-		PageSize       int32
 	}{}
 )
 
@@ -65,13 +62,9 @@ var nodeInterlockingsCmd = &cobra.Command{
 		if nodeInterlockingsFlags.LastKnownBlock >= 0 {
 			optionalParams.LastKnownBlock = optional.NewInt64(nodeInterlockingsFlags.LastKnownBlock)
 		}
-		optionalParams.LastToFirst = optional.NewBool(nodeInterlockingsFlags.LastToFirst)
-		if nodeInterlockingsFlags.Page >= 0 {
-			optionalParams.Page = optional.NewInt32(nodeInterlockingsFlags.Page)
-		}
-		if nodeInterlockingsFlags.PageSize >= 0 {
-			optionalParams.PageSize = optional.NewInt32(nodeInterlockingsFlags.PageSize)
-		}
+		optionalParams.LastToFirst = flags.Flags.OptionalLastToFirst()
+		optionalParams.Page = flags.Flags.OptionalPage()
+		optionalParams.PageSize = flags.Flags.OptionalPageSize()
 		ret, _, err := apiClient.NodeApi.InterlockingsList(nil, flags.Flags.ChainId, &optionalParams)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
@@ -83,8 +76,7 @@ var nodeInterlockingsCmd = &cobra.Command{
 
 func init() {
 	nodeInterlockingsCmd.Flags().Int64Var(&nodeInterlockingsFlags.LastKnownBlock, "last-known-block", -1, "Last known block.")
-	nodeInterlockingsCmd.Flags().BoolVar(&nodeInterlockingsFlags.LastToFirst, "last-to-first", false, "Last to first order.")
-	nodeInterlockingsCmd.Flags().Int32Var(&nodeInterlockingsFlags.Page, "page", -1, "Page.")
-	nodeInterlockingsCmd.Flags().Int32Var(&nodeInterlockingsFlags.PageSize, "page-size", -1, "Page size.")
+	flags.Flags.RegisterPagingParams(nodeInterlockingsCmd.Flags())
+	flags.Flags.RegisterPagingReverseParams(nodeInterlockingsCmd.Flags())
 	flags.Flags.RegisterChainIdParameter(nodeInterlockingsCmd.Flags())
 }

@@ -40,11 +40,8 @@ import (
 )
 
 var recordListCmdFlags = struct {
-	first       int64
-	last        int64
-	page        int32
-	pageSize    int32
-	lastToFirst bool
+	first int64
+	last  int64
 }{}
 
 // testCmd represents the test command
@@ -67,14 +64,9 @@ var recordListCmd = &cobra.Command{
 		if recordListCmdFlags.last != -1 {
 			options.LastSerial = optional.NewInt64(recordListCmdFlags.last)
 		}
-		if recordListCmdFlags.page != -1 {
-			options.Page = optional.NewInt32(recordListCmdFlags.page)
-		}
-		if recordListCmdFlags.pageSize != -1 {
-			options.PageSize = optional.NewInt32(recordListCmdFlags.pageSize)
-		}
-		options.LastToFirst = optional.NewBool(recordListCmdFlags.lastToFirst)
-
+		options.Page = flags.Flags.OptionalPage()
+		options.PageSize = flags.Flags.OptionalPageSize()
+		options.LastToFirst = flags.Flags.OptionalLastToFirst()
 		ret, _, err := apiClient.RecordApi.RecordsList(nil, flags.Flags.ChainId, &options)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
@@ -87,7 +79,6 @@ var recordListCmd = &cobra.Command{
 func init() {
 	recordListCmd.Flags().Int64Var(&recordListCmdFlags.first, "first", -1, "Serial of the first record.")
 	recordListCmd.Flags().Int64Var(&recordListCmdFlags.last, "last", -1, "Serial of the last record.")
-	recordListCmd.Flags().Int32Var(&recordListCmdFlags.page, "page", -1, "Page to return.")
-	recordListCmd.Flags().Int32Var(&recordListCmdFlags.pageSize, "page-size", -1, "Page size.")
-	recordListCmd.Flags().BoolVar(&recordListCmdFlags.lastToFirst, "last-to-first", false, "If true, reverses the order of the listing.")
+	flags.Flags.RegisterPagingParams(recordListCmd.Flags())
+	flags.Flags.RegisterPagingReverseParams(recordListCmd.Flags())
 }

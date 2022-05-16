@@ -28,52 +28,46 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package chain
+package flags
 
 import (
 	"github.com/antihax/optional"
-	"github.com/spf13/cobra"
-
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
-	"github.com/interlockledger/go-interlockledger-rest-client/client"
+	"github.com/spf13/pflag"
 )
 
-var chainInterlockingListCmdFlags = struct {
-	countFromLast int32
-}{}
-
-// testCmd represents the test command
-var chainInterlockingListCmd = &cobra.Command{
-	Use:   "interlocking-list",
-	Short: "List the interlocks registerd in this chain.",
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if err := flags.Flags.RequireChainId(); err != nil {
-			return err
-		}
-		return nil
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		apiClient, err := core.AppCore.NewClient()
-
-		var options client.ChainApiChainInterlockingsListOpts
-		if chainInterlockingListCmdFlags.countFromLast != -1 {
-			options.HowManyFromLast = optional.NewInt32(chainInterlockingListCmdFlags.countFromLast)
-		}
-		options.Page = flags.Flags.OptionalPage()
-		options.PageSize = flags.Flags.OptionalPageSize()
-
-		ret, _, err := apiClient.ChainApi.ChainInterlockingsList(nil, flags.Flags.ChainId, &options)
-		if err != nil {
-			return core.FormatRequestResponseCommandError(err)
-		}
-		core.PrintAsJSON(ret)
-		return nil
-	},
+// This struct holds the global flags used by all or most commands.
+type PagingFlags struct {
+	// Paging
+	Page        int32
+	PageSize    int32
+	LastToFirst bool
 }
 
-func init() {
-	chainInterlockingListCmd.Flags().Int32Var(&chainInterlockingListCmdFlags.countFromLast, "from-last", -1, "How many interlocking records to return.")
-	flags.Flags.RegisterChainIdParameter(chainInterlockingListCmd.Flags())
-	flags.Flags.RegisterPagingParams(chainInterlockingListCmd.Flags())
+func (f *PagingFlags) RegisterPagingParams(flagSet *pflag.FlagSet) {
+	flagSet.Int32Var(&f.Page, "page", -1, "The page.")
+	flagSet.Int32Var(&f.PageSize, "page-size", -1, "The page size.")
+}
+
+func (f *PagingFlags) RegisterPagingReverseParams(flagSet *pflag.FlagSet) {
+	flagSet.BoolVar(&f.LastToFirst, "last-to-first", false, "Invert the list order.")
+}
+
+func (f *PagingFlags) OptionalPage() optional.Int32 {
+	if f.Page == -1 {
+		return optional.EmptyInt32()
+	} else {
+		return optional.NewInt32(f.Page)
+	}
+}
+
+func (f *PagingFlags) OptionalPageSize() optional.Int32 {
+	if f.PageSize == -1 {
+		return optional.EmptyInt32()
+	} else {
+		return optional.NewInt32(f.PageSize)
+	}
+}
+
+func (f *PagingFlags) OptionalLastToFirst() optional.Bool {
+	return optional.NewBool(f.LastToFirst)
 }
