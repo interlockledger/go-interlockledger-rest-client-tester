@@ -33,6 +33,7 @@ package json
 import (
 	"fmt"
 
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 	"github.com/interlockledger/go-interlockledger-rest-client/crypto"
 	"github.com/spf13/cobra"
@@ -85,4 +86,8 @@ func LoadReaderCertificate(file string) (crypto.ReaderKey, error) {
 		return nil, fmt.Errorf("Unable to extract the public key: %w", err)
 	}
 	return readerKey, nil
+}
+
+func init() {
+	flags.Flags.RegisterChainIdParameter(JSONRootCmd.PersistentFlags())
 }

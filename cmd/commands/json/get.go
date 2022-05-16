@@ -61,7 +61,7 @@ var jsonGetCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := core.AppCore.NewClient()
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsGet(nil, flags.Flags.Chain, jsonGetCmdFlags.id)
+		ret, _, err := client.JsonDocumentApi.JsonDocumentsGet(nil, flags.Flags.ChainId, jsonGetCmdFlags.id)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

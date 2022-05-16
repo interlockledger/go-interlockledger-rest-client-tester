@@ -68,7 +68,7 @@ var chainInterlockingListCmd = &cobra.Command{
 		if chainInterlockingListCmdFlags.pageSize != -1 {
 			options.PageSize = optional.NewInt32(chainInterlockingListCmdFlags.pageSize)
 		}
-		ret, _, err := apiClient.ChainApi.ChainInterlockingsList(nil, flags.Flags.Chain, &options)
+		ret, _, err := apiClient.ChainApi.ChainInterlockingsList(nil, flags.Flags.ChainId, &options)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}
@@ -81,4 +81,5 @@ func init() {
 	chainInterlockingListCmd.Flags().Int32Var(&chainInterlockingListCmdFlags.countFromLast, "from-last", -1, "How many interlocking records to return.")
 	chainInterlockingListCmd.Flags().Int32Var(&chainInterlockingListCmdFlags.page, "page", -1, "Page to return.")
 	chainInterlockingListCmd.Flags().Int32Var(&chainInterlockingListCmdFlags.pageSize, "page-size", -1, "Page size.")
+	flags.Flags.RegisterChainIdParameter(chainInterlockingListCmd.Flags())
 }

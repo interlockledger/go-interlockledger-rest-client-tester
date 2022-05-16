@@ -58,11 +58,15 @@ var chainInterlockingAddCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		ret, _, err := client.ChainApi.ChainInterlockingAdd(nil, flags.Flags.Chain, &params)
+		ret, _, err := client.ChainApi.ChainInterlockingAdd(nil, flags.Flags.ChainId, &params)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}
 		core.PrintAsJSON(ret)
 		return nil
 	},
+}
+
+func init() {
+	flags.Flags.RegisterChainIdParameter(chainInterlockingAddCmd.Flags())
 }

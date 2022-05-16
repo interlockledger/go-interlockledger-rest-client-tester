@@ -72,7 +72,7 @@ var nodeInterlockingsCmd = &cobra.Command{
 		if nodeInterlockingsFlags.PageSize >= 0 {
 			optionalParams.PageSize = optional.NewInt32(nodeInterlockingsFlags.PageSize)
 		}
-		ret, _, err := apiClient.NodeApi.InterlockingsList(nil, flags.Flags.Chain, &optionalParams)
+		ret, _, err := apiClient.NodeApi.InterlockingsList(nil, flags.Flags.ChainId, &optionalParams)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}
@@ -86,4 +86,5 @@ func init() {
 	nodeInterlockingsCmd.Flags().BoolVar(&nodeInterlockingsFlags.LastToFirst, "last-to-first", false, "Last to first order.")
 	nodeInterlockingsCmd.Flags().Int32Var(&nodeInterlockingsFlags.Page, "page", -1, "Page.")
 	nodeInterlockingsCmd.Flags().Int32Var(&nodeInterlockingsFlags.PageSize, "page-size", -1, "Page size.")
+	flags.Flags.RegisterChainIdParameter(nodeInterlockingsCmd.Flags())
 }

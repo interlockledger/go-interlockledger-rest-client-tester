@@ -58,7 +58,7 @@ var recordGetCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		apiClient, err := core.AppCore.NewClient()
-		ret, _, err := apiClient.RecordApi.RecordGet(nil, flags.Flags.Chain, recordGetCmdFlags.id)
+		ret, _, err := apiClient.RecordApi.RecordGet(nil, flags.Flags.ChainId, recordGetCmdFlags.id)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

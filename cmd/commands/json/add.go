@@ -62,7 +62,7 @@ var jsonAddCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("Unable to initialize the client: %w\n", err)
 		}
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAdd(nil, flags.Flags.Chain, jsonDoc)
+		ret, _, err := client.JsonDocumentApi.JsonDocumentsAdd(nil, flags.Flags.ChainId, jsonDoc)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

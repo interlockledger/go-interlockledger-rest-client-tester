@@ -57,11 +57,15 @@ var chainKeyAddCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		ret, _, err := client.ChainApi.ChainPermittedKeysAdd(nil, flags.Flags.Chain, params)
+		ret, _, err := client.ChainApi.ChainPermittedKeysAdd(nil, flags.Flags.ChainId, params)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}
 		core.PrintAsJSON(ret)
 		return nil
 	},
+}
+
+func init() {
+	flags.Flags.RegisterChainIdParameter(chainKeyAddCmd.Flags())
 }

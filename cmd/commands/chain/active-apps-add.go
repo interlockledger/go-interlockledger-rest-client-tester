@@ -59,7 +59,7 @@ var chainActiveAppsAddCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := core.AppCore.NewClient()
 
-		ret, _, err := client.ChainApi.ChainActiveAppsAdd(nil, flags.Flags.Chain, *chainActiveAppsAddCmdFlags.apps)
+		ret, _, err := client.ChainApi.ChainActiveAppsAdd(nil, flags.Flags.ChainId, *chainActiveAppsAddCmdFlags.apps)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}
@@ -71,4 +71,5 @@ var chainActiveAppsAddCmd = &cobra.Command{
 func init() {
 	chainActiveAppsAddCmdFlags.apps = chainActiveAppsAddCmd.Flags().Int64SliceP(
 		"app", "a", []int64{}, "Id of the app to add.")
+	flags.Flags.RegisterChainIdParameter(chainActiveAppsAddCmd.Flags())
 }

@@ -30,19 +30,23 @@
 
 package flags
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/spf13/pflag"
+)
 
 var Flags GlobalFlags
 
 // This struct holds the global flags used by all or most commands.
 type GlobalFlags struct {
 	ConfigFile string // Configuration file
-	Chain      string // Chain ID
+	ChainId    string // Chain ID
 	ParamFile  string // Param file
 }
 
 func (f *GlobalFlags) RequireChainId() error {
-	if f.Chain == "" {
+	if f.ChainId == "" {
 		return fmt.Errorf("chain id is missing.")
 	} else {
 		return nil
@@ -55,4 +59,8 @@ func (f *GlobalFlags) RequireParamFile() error {
 	} else {
 		return nil
 	}
+}
+
+func (f *GlobalFlags) RegisterChainIdParameter(flagSet *pflag.FlagSet) {
+	flagSet.StringVarP(&f.ChainId, "chain", "c", "", "The ID of the chain.")
 }

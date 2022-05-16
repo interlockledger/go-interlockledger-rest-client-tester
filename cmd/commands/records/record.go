@@ -31,6 +31,7 @@
 package records
 
 import (
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
 	"github.com/spf13/cobra"
 )
 
@@ -43,4 +44,6 @@ var RecordRootCmd = &cobra.Command{
 func init() {
 	RecordRootCmd.AddCommand(recordListCmd)
 	RecordRootCmd.AddCommand(recordGetCmd)
+
+	flags.Flags.RegisterChainIdParameter(RecordRootCmd.PersistentFlags())
 }

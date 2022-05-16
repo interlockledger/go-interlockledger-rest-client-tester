@@ -79,7 +79,7 @@ var jsonAddWithKeyCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("Unable to initialize the client: %w\n", err)
 		}
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithKey(nil, flags.Flags.Chain,
+		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithKey(nil, flags.Flags.ChainId,
 			encKey, keyId,
 			jsonDoc)
 		if err != nil {

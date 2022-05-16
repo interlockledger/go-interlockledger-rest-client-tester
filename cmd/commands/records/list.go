@@ -75,7 +75,7 @@ var recordListCmd = &cobra.Command{
 		}
 		options.LastToFirst = optional.NewBool(recordListCmdFlags.lastToFirst)
 
-		ret, _, err := apiClient.RecordApi.RecordsList(nil, flags.Flags.Chain, &options)
+		ret, _, err := apiClient.RecordApi.RecordsList(nil, flags.Flags.ChainId, &options)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

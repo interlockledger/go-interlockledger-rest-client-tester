@@ -41,9 +41,15 @@ import (
 var chainKeyListCmd = &cobra.Command{
 	Use:   "key-list",
 	Short: "List the keys authorized to use the chain.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireParamFile(); err != nil {
+			return err
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := core.AppCore.NewClient()
-		chains, _, err := client.ChainApi.ChainPermittedKeysList(nil, flags.Flags.Chain)
+		chains, _, err := client.ChainApi.ChainPermittedKeysList(nil, flags.Flags.ChainId)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}
@@ -52,4 +58,8 @@ var chainKeyListCmd = &cobra.Command{
 		}
 		return nil
 	},
+}
+
+func init() {
+	flags.Flags.RegisterChainIdParameter(chainKeyListCmd.Flags())
 }

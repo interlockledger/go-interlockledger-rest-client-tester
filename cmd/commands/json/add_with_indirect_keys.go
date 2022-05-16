@@ -72,7 +72,7 @@ var jsonAddWithIndirectKeyCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("Unable to initialize the client: %w\n", err)
 		}
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithIndirectKeys(nil, flags.Flags.Chain, *flagPubKeyRefs, jsonDoc)
+		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithIndirectKeys(nil, flags.Flags.ChainId, *flagPubKeyRefs, jsonDoc)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

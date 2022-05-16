@@ -50,11 +50,15 @@ var chainActiveAppsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := core.AppCore.NewClient()
 
-		ret, _, err := client.ChainApi.ChainActiveAppsList(nil, flags.Flags.Chain)
+		ret, _, err := client.ChainApi.ChainActiveAppsList(nil, flags.Flags.ChainId)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}
 		core.PrintAsJSON(ret)
 		return nil
 	},
+}
+
+func init() {
+	flags.Flags.RegisterChainIdParameter(chainActiveAppsCmd.Flags())
 }
