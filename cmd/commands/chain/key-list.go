@@ -42,7 +42,7 @@ var chainKeyListCmd = &cobra.Command{
 	Use:   "key-list",
 	Short: "List the keys authorized to use the chain.",
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if err := flags.Flags.RequireParamFile(); err != nil {
+		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
 		}
 		return nil

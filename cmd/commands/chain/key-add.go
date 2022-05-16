@@ -44,6 +44,9 @@ var chainKeyAddCmd = &cobra.Command{
 	Short: "Add a new authorized key to access the chain.",
 	Long:  "Add a new authorized key to access the chain. Use a param file like chain-key-request.json to set the new chain parameters.",
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireChainId(); err != nil {
+			return err
+		}
 		if err := flags.Flags.RequireParamFile(); err != nil {
 			return err
 		}
@@ -68,4 +71,5 @@ var chainKeyAddCmd = &cobra.Command{
 
 func init() {
 	flags.Flags.RegisterChainIdParameter(chainKeyAddCmd.Flags())
+	flags.Flags.RegisterParamFileParameter(chainKeyAddCmd.Flags())
 }

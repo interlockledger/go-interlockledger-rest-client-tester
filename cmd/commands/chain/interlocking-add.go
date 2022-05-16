@@ -44,6 +44,9 @@ var chainInterlockingAddCmd = &cobra.Command{
 	Short: "Creates a new interlock.",
 	Long:  "Creates a new interlock. Use a param file like chain-interlock.json to set the new chain parameters.",
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireChainId(); err != nil {
+			return err
+		}
 		if err := flags.Flags.RequireParamFile(); err != nil {
 			return err
 		}
@@ -69,4 +72,5 @@ var chainInterlockingAddCmd = &cobra.Command{
 
 func init() {
 	flags.Flags.RegisterChainIdParameter(chainInterlockingAddCmd.Flags())
+	flags.Flags.RegisterParamFileParameter(chainInterlockingAddCmd.Flags())
 }

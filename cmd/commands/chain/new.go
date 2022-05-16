@@ -66,3 +66,7 @@ var chainNewChainCmd = &cobra.Command{
 		return nil
 	},
 }
+
+func init() {
+	flags.Flags.RegisterParamFileParameter(chainNewChainCmd.Flags())
+}
