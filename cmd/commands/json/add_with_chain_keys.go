@@ -40,10 +40,13 @@ import (
 
 var flagChainKeyRefs *[]string
 
-// testCmd represents the test command
+// Implements POST /jsonDocuments@{chain}/withChainKeys
 var jsonAddWithChainKeysCmd = &cobra.Command{
 	Use:   "add-with-chain-keys",
 	Short: "Adds a JSON into the given chain using the specified key.",
+	Long: `Adds a JSON into the given chain using the specified key.
+	
+Calls POST /jsonDocuments@{chain}/withChainKeys`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -68,11 +71,11 @@ var jsonAddWithChainKeysCmd = &cobra.Command{
 		fmt.Println("=================")
 		core.PrintAsJSON(jsonDoc)
 
-		client, err := core.AppCore.NewClient()
+		apiClient, err := core.AppCore.NewClient()
 		if err != nil {
 			return fmt.Errorf("Unable to initialize the client: %w\n", err)
 		}
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithChainKeys(nil, flags.Flags.ChainId, *flagChainKeyRefs, jsonDoc)
+		ret, _, err := apiClient.JsonDocumentApi.JsonDocumentsAddWithChainKeys(nil, flags.Flags.ChainId, *flagChainKeyRefs, jsonDoc)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

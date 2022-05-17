@@ -38,11 +38,13 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client/client/models"
 )
 
-// testCmd represents the test command
+// POST /documents/transaction
 var docsBeginTransactionCmd = &cobra.Command{
 	Use:   "transaction-begin",
 	Short: "Begin a new document transaction.",
-	Long:  "Begin a new document transaction. Use a param file like document-begin-transaction.json to set transaction parameters.",
+	Long: `Begin a new document transaction. Use a param file like document-begin-transaction.json to set transaction parameters.
+
+Calls POST /documents/transaction`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireParamFile(); err != nil {
 			return err

@@ -36,13 +36,20 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
-// testCmd represents the test command
+// Implements GET /peers
 var nodePeersCmd = &cobra.Command{
 	Use:   "peers",
 	Short: "Get a list of peers kwown in the network.",
+	Long: `Get a list of peers kwown in the network.
+	
+Calls GET /peers`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := core.AppCore.NewClient()
-		ret, _, err := client.NodeApi.PeersList(nil)
+		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
+
+		ret, _, err := apiClient.NodeApi.PeersList(nil)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

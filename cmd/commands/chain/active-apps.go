@@ -43,8 +43,7 @@ var chainActiveAppsCmd = &cobra.Command{
 	Short: "List the active apps in the given chain.",
 	Long: `List the active apps in the given chain.
 
-Calls GET ​/chain​/{chain}​/activeApps
-	`,
+Calls GET /chain/{chain}/activeApps`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err

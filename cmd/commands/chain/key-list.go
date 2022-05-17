@@ -43,7 +43,7 @@ var chainKeyListCmd = &cobra.Command{
 	Short: "List the keys authorized to use the chain.",
 	Long: `List the keys authorized to use the chain.
 
-Calls GET ​/chain​/{chain}​/key
+Calls GET /chain/{chain}/key
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {

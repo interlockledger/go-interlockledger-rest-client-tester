@@ -36,10 +36,14 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
-// testCmd represents the test command
+// Implements GET /documents/configuration
 var docsGetCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Get the configuration.",
+	Long: `Get the configuration.
+
+Calls GET /documents/configuration
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		apiClient, err := core.AppCore.NewClient()
 		if err != nil {

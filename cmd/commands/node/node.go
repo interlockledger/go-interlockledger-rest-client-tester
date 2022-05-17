@@ -28,13 +28,14 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+// Implements the node APIs.
 package node
 
 import (
 	"github.com/spf13/cobra"
 )
 
-// testCmd represents the test command
+// Root command for the node APIs.
 var NodeRootCmd = &cobra.Command{
 	Use:   "node",
 	Short: "Node APIs.",

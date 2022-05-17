@@ -36,13 +36,20 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
-// testCmd represents the test command
+// Implements GET /apps
 var nodeAppsCmd = &cobra.Command{
 	Use:   "apps",
 	Short: "Get a list of valid apps in the network.",
+	Long: `Get a list of valid apps in the network.
+	
+Calls GET /apps`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := core.AppCore.NewClient()
-		ret, _, err := client.NodeApi.AppsList(nil)
+		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
+
+		ret, _, err := apiClient.NodeApi.AppsList(nil)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

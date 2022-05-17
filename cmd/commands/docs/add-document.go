@@ -41,10 +41,14 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client/client"
 )
 
-// testCmd represents the test command
+// Implements POST /documents/transaction/{transactionId}
 var docsAddDocumentCmd = &cobra.Command{
 	Use:   "add-document",
 	Short: "Adds a document to the specified transaction.",
+	Long: `Adds a document to the specified transaction.
+
+Calls POST /documents/transaction/{transactionId}
+`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := docsFlags.RequireTransactionId(); err != nil {
 			return err

@@ -41,10 +41,13 @@ import (
 
 var flagContextId string
 
-// testCmd represents the test command
+// Implements POST /jsonDocuments@{chain}/allow
 var jsonAllowCmd = &cobra.Command{
 	Use:   "allow",
 	Short: "Adds a new allowed reader.",
+	Long: `Adds a new allowed reader.
+
+Calls POST /jsonDocuments@{chain}/allow`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -85,11 +88,11 @@ var jsonAllowCmd = &cobra.Command{
 		fmt.Println("=============")
 		core.PrintAsJSON(body)
 
-		client, err := core.AppCore.NewClient()
+		apiClient, err := core.AppCore.NewClient()
 		if err != nil {
 			return fmt.Errorf("Unable to initialize the client: %w\n", err)
 		}
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAllowReaders(nil, flags.Flags.ChainId, &body)
+		ret, _, err := apiClient.JsonDocumentApi.JsonDocumentsAllowReaders(nil, flags.Flags.ChainId, &body)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

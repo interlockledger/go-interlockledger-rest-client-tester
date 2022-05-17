@@ -44,7 +44,7 @@ var chainNewChainCmd = &cobra.Command{
 	Short: "Creates a new chain.",
 	Long: `Creates a new chain. Use a param file like new-chain-request-example.json to set the new chain parameters.
 
-Calls POST ​/chain
+Calls POST /chain
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireParamFile(); err != nil {

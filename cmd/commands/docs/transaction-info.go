@@ -36,10 +36,13 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
-// testCmd represents the test command
+// Implements GET /documents/transaction/{transactionId}
 var docsTransactionInfoCmd = &cobra.Command{
 	Use:   "transaction-status",
 	Short: "Returns the status of an open transaction.",
+	Long: `Returns the status of an open transaction.
+	
+Calls GET /documents/transaction/{transactionId}`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := docsFlags.RequireTransactionId(); err != nil {
 			return err

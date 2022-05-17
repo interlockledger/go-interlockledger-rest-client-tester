@@ -38,10 +38,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// testCmd represents the test command
+// Implements POST /jsonDocuments@{chain}/withKey
 var jsonAddWithKeyCmd = &cobra.Command{
 	Use:   "add-with-key",
 	Short: "Adds a JSON into the given chain using the specified key.",
+	Long: `Adds a JSON into the given chain using the specified key.
+
+Calls POST /jsonDocuments@{chain}/withKey`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -75,11 +78,11 @@ var jsonAddWithKeyCmd = &cobra.Command{
 		fmt.Println("=================")
 		core.PrintAsJSON(jsonDoc)
 
-		client, err := core.AppCore.NewClient()
+		apiClient, err := core.AppCore.NewClient()
 		if err != nil {
 			return fmt.Errorf("Unable to initialize the client: %w\n", err)
 		}
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithKey(nil, flags.Flags.ChainId,
+		ret, _, err := apiClient.JsonDocumentApi.JsonDocumentsAddWithKey(nil, flags.Flags.ChainId,
 			encKey, keyId,
 			jsonDoc)
 		if err != nil {

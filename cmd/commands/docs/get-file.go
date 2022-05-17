@@ -40,10 +40,14 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
-// testCmd represents the test command
+// Implements GET /documents/{locator}/{index}
 var docsGetFileCmd = &cobra.Command{
 	Use:   "get-file",
-	Short: "Downloads a zip file with all documents pointed by the locator.",
+	Short: "Downloads the specified file inside the documents pointed by the locator.",
+	Long: `Downloads the specified file inside the documents pointed by the locator.
+	
+Calls GET /documents/{locator}/{index}
+`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := docsFlags.RequireLocatorAndIndex(); err != nil {
 			return err

@@ -43,10 +43,13 @@ var recordGetJSONCmdFlags = struct {
 	id int64
 }{}
 
-// testCmd represents the test command
+// Implements GET /records@{chain}/asJson/{serial}
 var recordGetJSONCmd = &cobra.Command{
 	Use:   "get-json",
-	Short: "Get a given record.",
+	Short: "Get a given record as JSON.",
+	Long: `Get a given record as JSON.
+
+Calls GET /records@{chain}/asJson/{serial}`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -58,6 +61,9 @@ var recordGetJSONCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
 		ret, _, err := apiClient.RecordApi.RecordGetAsJson(nil, flags.Flags.ChainId, recordFlags.Id)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)

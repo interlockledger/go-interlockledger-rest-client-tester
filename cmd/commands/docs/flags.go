@@ -36,8 +36,10 @@ import (
 	"github.com/spf13/pflag"
 )
 
+// Flags for the command docs.
 var docsFlags DocsFlags
 
+// Flags for the command docs.
 type DocsFlags struct {
 	TransactionId string
 	DocumentFile  string

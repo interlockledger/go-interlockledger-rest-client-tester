@@ -49,7 +49,7 @@ var chainActiveAppsAddCmd = &cobra.Command{
 	Short: "Adds a given App to the chain.",
 	Long: `Adds a given App to the chain.
 	
-Calls POST ​/chain​/{chain}​/activeApps`,
+Calls POST /chain/{chain}/activeApps`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err

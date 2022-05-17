@@ -38,13 +38,20 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
-// testCmd represents the test command
+// Implements GET /apiVersion
 var nodeAPIVersionCmd = &cobra.Command{
 	Use:   "api-version",
 	Short: "Get the version of the API.",
+	Long: `Get the version of the API.
+	
+Calls GET /apiVersion`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := core.AppCore.NewClient()
-		version, _, err := client.NodeApi.ApiVersion(nil)
+		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
+
+		version, _, err := apiClient.NodeApi.ApiVersion(nil)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

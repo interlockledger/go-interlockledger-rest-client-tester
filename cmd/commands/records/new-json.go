@@ -47,10 +47,13 @@ var recordNewJSONCmdFlags = struct {
 	payloadFile  string
 }{}
 
-// testCmd represents the test command
+// Implements POST /records@{chain}/asJson
 var recordNewJSONCmd = &cobra.Command{
 	Use:   "new-json",
-	Short: "Creates a new record. Use a param file like record-new.json to set the new chain parameters.",
+	Short: "Creates a new record from a JSON.",
+	Long: `Creates a new record. Use a param file like record-new.json to set the new chain parameters.
+
+Calls POST /records@{chain}/asJson`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err

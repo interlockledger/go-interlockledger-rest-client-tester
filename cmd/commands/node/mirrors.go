@@ -36,13 +36,20 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
-// testCmd represents the test command
+// Implements GET /mirrors
 var nodeMirrorsCmd = &cobra.Command{
 	Use:   "mirrors",
 	Short: "Get a list of mirrors instances in the network.",
+	Long: `Get a list of mirrors instances in the network.
+	
+Calls GET /mirrors`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := core.AppCore.NewClient()
-		ret, _, err := client.NodeApi.MirrorsList(nil)
+		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
+
+		ret, _, err := apiClient.NodeApi.MirrorsList(nil)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

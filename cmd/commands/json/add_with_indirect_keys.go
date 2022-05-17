@@ -40,10 +40,13 @@ import (
 
 var flagPubKeyRefs *[]string
 
-// testCmd represents the test command
+// Implements POST /jsonDocuments@{chain}/withIndirectKeys
 var jsonAddWithIndirectKeyCmd = &cobra.Command{
 	Use:   "add-with-indired-keys",
 	Short: "Adds a JSON into the given chain using the specified key.",
+	Long: `Adds a JSON into the given chain using the specified key.
+
+Calls POST /jsonDocuments@{chain}/withIndirectKeys`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -68,11 +71,11 @@ var jsonAddWithIndirectKeyCmd = &cobra.Command{
 		fmt.Println("=================")
 		core.PrintAsJSON(jsonDoc)
 
-		client, err := core.AppCore.NewClient()
+		apiClient, err := core.AppCore.NewClient()
 		if err != nil {
 			return fmt.Errorf("Unable to initialize the client: %w\n", err)
 		}
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAddWithIndirectKeys(nil, flags.Flags.ChainId, *flagPubKeyRefs, jsonDoc)
+		ret, _, err := apiClient.JsonDocumentApi.JsonDocumentsAddWithIndirectKeys(nil, flags.Flags.ChainId, *flagPubKeyRefs, jsonDoc)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

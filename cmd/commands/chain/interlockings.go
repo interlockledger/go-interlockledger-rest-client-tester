@@ -48,7 +48,7 @@ var chainInterlockingListCmd = &cobra.Command{
 	Short: "List the interlocks registerd in this chain.",
 	Long: `List the interlocks registerd in this chain.
 
-Calls  GET ​/chain​/{chain}​/interlockings
+Calls  GET /chain/{chain}/interlockings
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {

@@ -28,6 +28,7 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+// Implements the JSON documents API.
 package json
 
 import (
@@ -44,7 +45,7 @@ var JSONRootCmdFlags = struct {
 	ReaderCertFile string // Reader key
 }{}
 
-// testCmd represents the test command
+// Root command of the JSON documents API.
 var JSONRootCmd = &cobra.Command{
 	Use:   "json",
 	Short: "Execute JSON document API calls.",
@@ -62,6 +63,8 @@ func init() {
 	JSONRootCmd.PersistentFlags().StringVar(&JSONRootCmdFlags.ReaderCertFile, "reader-cert", "", "The certificate file that contains the reader key.")
 }
 
+// Loads the JSON payload. If the parameter is not provided, returns a dummy
+// json instead.
 func loadJSON() (map[string]any, error) {
 
 	if JSONRootCmdFlags.JSONFile == "" {
@@ -75,6 +78,7 @@ func loadJSON() (map[string]any, error) {
 	return ret, nil
 }
 
+// Loads the reader certficate.
 func LoadReaderCertificate(file string) (crypto.ReaderKey, error) {
 	// Load the reader certificate
 	cert, err := crypto.LoadCertificate(file)

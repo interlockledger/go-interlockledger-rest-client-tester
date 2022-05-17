@@ -28,6 +28,7 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+// Implements the records API.
 package records
 
 import (
@@ -35,7 +36,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// testCmd represents the test command
+// Root command of the record API.
 var RecordRootCmd = &cobra.Command{
 	Use:   "record",
 	Short: "Execute record related APIs calls.",

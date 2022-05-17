@@ -44,10 +44,13 @@ var (
 	}{}
 )
 
-// testCmd represents the test command
+// Implements GET /interlockings/{targetChain}
 var nodeInterlockingsCmd = &cobra.Command{
 	Use:   "interlockings",
-	Short: "Get the version of the API.",
+	Short: "List the interlocks on a given chain.",
+	Long: `List the interlocks on a given chain.
+
+Calls GET /interlockings/{targetChain}`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -56,6 +59,9 @@ var nodeInterlockingsCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
 
 		var optionalParams client.NodeApiInterlockingsListOpts
 		optionalParams.LastKnownBlock = flags.OptionalInt64(nodeInterlockingsFlags.LastKnownBlock)

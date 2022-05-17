@@ -42,7 +42,7 @@ var chainListCmd = &cobra.Command{
 	Short: "List the chains on this node.",
 	Long: `List the chains on this node.
 
-Calls GET ​/chain
+Calls GET /chain
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		appClient, err := core.AppCore.NewClient()

@@ -43,7 +43,7 @@ var chainDetailsCmd = &cobra.Command{
 	Short: "Get the details of the given chain.",
 	Long: `Get the details of the given chain.
 	
-Calls GET ​/chain​/{chain}
+Calls GET /chain/{chain}
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {

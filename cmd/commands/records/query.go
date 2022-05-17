@@ -38,10 +38,13 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client/client"
 )
 
-// testCmd represents the test command
+// Implements GET /records@{chain}/query
 var recordQueryCmd = &cobra.Command{
 	Use:   "query",
 	Short: "Query using InterlockQL.",
+	Long: `Query using InterlockQL.
+
+Calls GET /records@{chain}/query`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -50,6 +53,9 @@ var recordQueryCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
 
 		var options client.RecordApiRecordsQueryOpts
 		options.QueryAsInterlockQL = recordFlags.OptionalQuery()

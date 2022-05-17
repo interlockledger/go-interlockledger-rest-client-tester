@@ -38,10 +38,13 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client/client"
 )
 
-// testCmd represents the test command
+// Implements GET /records@{chain}
 var recordListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List the chains on this node.",
+	Long: `List the chains on this node.
+
+Calls GET /records@{chain}`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -50,6 +53,9 @@ var recordListCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
 
 		var options client.RecordApiRecordsListOpts
 		options.FirstSerial = recordFlags.OptionalFirst()

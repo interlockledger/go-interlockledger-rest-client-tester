@@ -45,11 +45,13 @@ var jsonGetCmdFlags = struct {
 	id         int64
 }{}
 
-// testCmd represents the test command
+// Implements GET /jsonDocuments@{chain}/{serial}
 var jsonGetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get a JSON into the given chain",
-	Long:  "Get a JSON into the given chain. It requires the chain and id.",
+	Long: `Get a JSON into the given chain. It requires the chain and id.
+	
+Call GET /jsonDocuments@{chain}/{serial}`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -60,8 +62,11 @@ var jsonGetCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := core.AppCore.NewClient()
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsGet(nil, flags.Flags.ChainId, jsonGetCmdFlags.id)
+		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
+		ret, _, err := apiClient.JsonDocumentApi.JsonDocumentsGet(nil, flags.Flags.ChainId, jsonGetCmdFlags.id)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

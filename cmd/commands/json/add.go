@@ -39,10 +39,14 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
-// testCmd represents the test command
+// Implements POST /jsonDocuments@{chain}
 var jsonAddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Adds a JSON into the given chain.",
+	Long: `Adds a JSON into the given chain.
+
+Calls POST /jsonDocuments@{chain}
+`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -58,11 +62,11 @@ var jsonAddCmd = &cobra.Command{
 		fmt.Println("=================")
 		core.PrintAsJSON(jsonDoc)
 
-		client, err := core.AppCore.NewClient()
+		apiClient, err := core.AppCore.NewClient()
 		if err != nil {
 			return fmt.Errorf("Unable to initialize the client: %w\n", err)
 		}
-		ret, _, err := client.JsonDocumentApi.JsonDocumentsAdd(nil, flags.Flags.ChainId, jsonDoc)
+		ret, _, err := apiClient.JsonDocumentApi.JsonDocumentsAdd(nil, flags.Flags.ChainId, jsonDoc)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

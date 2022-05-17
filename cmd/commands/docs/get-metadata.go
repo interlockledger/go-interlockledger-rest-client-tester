@@ -36,10 +36,13 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
-// testCmd represents the test command
+// Implements GET ​/documents​/{locator}​/metadata
 var docsGetMetadataCmd = &cobra.Command{
 	Use:   "metadata",
 	Short: "Returns the metadata of a given documents record.",
+	Long: `Returns the metadata of a given documents record.
+	
+Calls GET /documents/{locator}/metadata`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := docsFlags.RequireLocator(); err != nil {
 			return err

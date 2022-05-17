@@ -28,13 +28,14 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+// Implements the documents API.
 package docs
 
 import (
 	"github.com/spf13/cobra"
 )
 
-// testCmd represents the test command
+// Root command for docs.
 var DocsRootCmd = &cobra.Command{
 	Use:   "docs",
 	Short: "Documents APIs.",
