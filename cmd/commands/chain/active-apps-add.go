@@ -43,10 +43,13 @@ var chainActiveAppsAddCmdFlags = struct {
 	apps *[]int64
 }{}
 
-// testCmd represents the test command
+// Implements POST ​/chain​/{chain}​/activeApps
 var chainActiveAppsAddCmd = &cobra.Command{
 	Use:   "active-apps-add",
 	Short: "Adds a given App to the chain.",
+	Long: `Adds a given App to the chain.
+	
+Calls POST ​/chain​/{chain}​/activeApps`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -57,9 +60,12 @@ var chainActiveAppsAddCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := core.AppCore.NewClient()
-
-		ret, _, err := client.ChainApi.ChainActiveAppsAdd(nil, flags.Flags.ChainId, *chainActiveAppsAddCmdFlags.apps)
+		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
+		// Call the API
+		ret, _, err := apiClient.ChainApi.ChainActiveAppsAdd(nil, flags.Flags.ChainId, *chainActiveAppsAddCmdFlags.apps)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

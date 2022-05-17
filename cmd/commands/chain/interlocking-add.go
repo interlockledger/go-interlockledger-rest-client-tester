@@ -38,11 +38,14 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client/client/models"
 )
 
-// testCmd represents the test command
+// Implements POST ​/chain​/{chain}​/interlockings
 var chainInterlockingAddCmd = &cobra.Command{
 	Use:   "interlocking-add",
 	Short: "Creates a new interlock.",
-	Long:  "Creates a new interlock. Use a param file like chain-interlock.json to set the new chain parameters.",
+	Long: `Creates a new interlock. Use a param file like chain-interlock.json to set the new chain parameters.
+
+Calls POST ​/chain​/{chain}​/interlockings
+`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -53,7 +56,10 @@ var chainInterlockingAddCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := core.AppCore.NewClient()
+		appClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
 
 		// Load the parameters
 		var params models.ForceInterlockModel
@@ -61,7 +67,7 @@ var chainInterlockingAddCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		ret, _, err := client.ChainApi.ChainInterlockingAdd(nil, flags.Flags.ChainId, &params)
+		ret, _, err := appClient.ChainApi.ChainInterlockingAdd(nil, flags.Flags.ChainId, &params)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

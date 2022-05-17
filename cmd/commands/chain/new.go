@@ -38,11 +38,14 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client/client/models"
 )
 
-// testCmd represents the test command
+// Implements POST ​/chain
 var chainNewChainCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Creates a new chain.",
-	Long:  "Creates a new chain. Use a param file like new-chain-request-example.json to set the new chain parameters.",
+	Long: `Creates a new chain. Use a param file like new-chain-request-example.json to set the new chain parameters.
+
+Calls POST ​/chain
+`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireParamFile(); err != nil {
 			return err
@@ -50,7 +53,10 @@ var chainNewChainCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := core.AppCore.NewClient()
+		appClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
 
 		// Load the parameters
 		var params models.ChainCreatedModel
@@ -58,7 +64,7 @@ var chainNewChainCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		ret, _, err := client.ChainApi.ChainCreate(nil, &params)
+		ret, _, err := appClient.ChainApi.ChainCreate(nil, &params)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

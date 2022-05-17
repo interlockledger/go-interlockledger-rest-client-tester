@@ -38,11 +38,14 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client/client/models"
 )
 
-// testCmd represents the test command
+// Implements POST ​/chain​/{chain}​/key
 var chainKeyAddCmd = &cobra.Command{
 	Use:   "key-add",
 	Short: "Add a new authorized key to access the chain.",
-	Long:  "Add a new authorized key to access the chain. Use a param file like chain-key-request.json to set the new chain parameters.",
+	Long: `Add a new authorized key to access the chain. Use a param file like chain-key-request.json to set the new chain parameters.
+
+Calls POST ​/chain​/{chain}​/key
+`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -54,6 +57,10 @@ var chainKeyAddCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
+
 		// Load the parameters
 		var params []models.KeyPermitModel
 		err = core.LoadJSONFile(flags.Flags.ParamFile, &params)

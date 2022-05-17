@@ -36,13 +36,20 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
-// testCmd represents the test command
+// Implements GET ​/chain
 var chainListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List the chains on this node.",
+	Long: `List the chains on this node.
+
+Calls GET ​/chain
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := core.AppCore.NewClient()
-		chains, _, err := client.ChainApi.ChainsList(nil)
+		appClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
+		chains, _, err := appClient.ChainApi.ChainsList(nil)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

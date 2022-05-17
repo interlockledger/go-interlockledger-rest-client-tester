@@ -53,7 +53,7 @@ func PrintAsJSON(o any) {
 	fmt.Println(ToPrettyJSON(o))
 }
 
-// Loads a JSON file from the file system.
+// Loads a JSON file from a file.
 func LoadJSONFile(file string, value any) error {
 	bin, err := os.ReadFile(file)
 	if err != nil {
@@ -62,8 +62,13 @@ func LoadJSONFile(file string, value any) error {
 	return json.Unmarshal(bin, value)
 }
 
-// Formats the response in a human readable format that will help with the
-// interpretation of the results.
+/*
+Formats the errors returned by the API calls in a human readable form that is
+them wrapped into an error that can be returned to Cobra framework.
+
+This is a quick and dirty way to implement error handling using this framework
+but may not be the best way to do so.
+*/
 func FormatRequestResponseCommandError(err error) error {
 	switch err.(type) {
 	case *client.GenericSwaggerError:

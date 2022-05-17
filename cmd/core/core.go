@@ -38,12 +38,15 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client/client"
 )
 
+// This is the application's core singleton.
 var AppCore ApplicationCore
 
+// The application's core type.
 type ApplicationCore struct {
 	Config Configuration
 }
 
+// Loads the configuration from the file.
 func (c *ApplicationCore) LoadConfig(configFile string) error {
 	if c.Config.Loaded {
 		return nil
@@ -51,6 +54,7 @@ func (c *ApplicationCore) LoadConfig(configFile string) error {
 	return c.Config.Load(configFile)
 }
 
+// Creates a new API client based on the loaded configuration.
 func (c *ApplicationCore) NewClient() (*client.APIClient, error) {
 	if !c.Config.Loaded {
 		return nil, fmt.Errorf("The configuration was not loaded.")

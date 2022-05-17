@@ -28,6 +28,7 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+// This package implements the root command of this application.
 package commands
 
 import (
@@ -45,9 +46,10 @@ import (
 var (
 	// Used for flags.
 	rootCmd = &cobra.Command{
-		Use:   "IL2 Go REST Client Tester",
-		Short: "Test program for the IL2 Go REST Client",
-		Long:  "This is a very simple test program for the IL2 Go REST Client.",
+		Use:     "IL2 Go REST Client Tester",
+		Short:   "Test program for the IL2 Go REST Client",
+		Long:    "This is a very simple test program to test and show how to use the IL2 Go REST Client.",
+		Version: "0.1.0",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			return core.AppCore.LoadConfig(flags.Flags.ConfigFile)
 		},
@@ -55,16 +57,15 @@ var (
 )
 
 func init() {
-
+	// Register the API commands
 	rootCmd.AddCommand(chain.ChainRootCmd)
 	rootCmd.AddCommand(json.JSONRootCmd)
 	rootCmd.AddCommand(node.NodeRootCmd)
 	rootCmd.AddCommand(records.RecordRootCmd)
 	rootCmd.AddCommand(docs.DocsRootCmd)
 
-	// Adding the parameters used by most commands.
+	// Adding the parameters shared by all commands.
 	rootCmd.PersistentFlags().StringVar(&flags.Flags.ConfigFile, "config", "config.json", "The configuration file.")
-	//rootCmd.PersistentFlags().StringVarP(&flags.Flags.ParamFile, "params", "p", "", "A file with the parameters for certain commands.")
 }
 
 // Execute executes the root command.

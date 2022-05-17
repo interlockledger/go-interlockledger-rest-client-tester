@@ -28,13 +28,14 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+// Implementation of chain API calls.
 package chain
 
 import (
 	"github.com/spf13/cobra"
 )
 
-// testCmd represents the test command
+// Chain's root command.
 var ChainRootCmd = &cobra.Command{
 	Use:   "chain",
 	Short: "Execute chain related APIs calls.",

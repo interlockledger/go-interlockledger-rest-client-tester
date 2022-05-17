@@ -37,10 +37,14 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
-// testCmd represents the test command
+// Implements GET ​/chain​/{chain}​/activeApps
 var chainActiveAppsCmd = &cobra.Command{
 	Use:   "active-apps",
 	Short: "List the active apps in the given chain.",
+	Long: `List the active apps in the given chain.
+
+Calls GET ​/chain​/{chain}​/activeApps
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -48,9 +52,12 @@ var chainActiveAppsCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := core.AppCore.NewClient()
+		appClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
 
-		ret, _, err := client.ChainApi.ChainActiveAppsList(nil, flags.Flags.ChainId)
+		ret, _, err := appClient.ChainApi.ChainActiveAppsList(nil, flags.Flags.ChainId)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

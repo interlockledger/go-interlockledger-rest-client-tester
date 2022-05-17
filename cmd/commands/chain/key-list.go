@@ -37,10 +37,14 @@ import (
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
-// testCmd represents the test command
+// Implements GET ​/chain​/{chain}​/key
 var chainKeyListCmd = &cobra.Command{
 	Use:   "key-list",
 	Short: "List the keys authorized to use the chain.",
+	Long: `List the keys authorized to use the chain.
+
+Calls GET ​/chain​/{chain}​/key
+`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -48,8 +52,12 @@ var chainKeyListCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := core.AppCore.NewClient()
-		chains, _, err := client.ChainApi.ChainPermittedKeysList(nil, flags.Flags.ChainId)
+		appClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
+
+		chains, _, err := appClient.ChainApi.ChainPermittedKeysList(nil, flags.Flags.ChainId)
 		if err != nil {
 			return core.FormatRequestResponseCommandError(err)
 		}

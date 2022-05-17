@@ -32,6 +32,7 @@
 // IL2 API.
 package core
 
+// Structure of the configuration file used by this program.
 type Configuration struct {
 	Loaded   bool   `json:"-"`
 	BasePath string `json:"basePath"`
@@ -39,14 +40,18 @@ type Configuration struct {
 	KeyFile  string `json:"keyFile"`
 }
 
-// Loads the default configuration.
+// Loads the default values.
 func (c *Configuration) Defaults() {
+	c.Loaded = false
 	c.BasePath = "https://server:port"
 	c.CertFile = "key.pem"
 	c.KeyFile = "cert.pem"
 }
 
-// Loads the configuration from a file.
+/*
+Loads the configuration from a file. Missing fields in the file will be set to
+their default values. On success, the field Loaded will be set to true.
+*/
 func (c *Configuration) Load(file string) error {
 	c.Defaults()
 	err := LoadJSONFile(file, c)

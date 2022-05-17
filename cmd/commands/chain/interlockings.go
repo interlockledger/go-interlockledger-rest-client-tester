@@ -42,10 +42,14 @@ var chainInterlockingListCmdFlags = struct {
 	countFromLast int32
 }{}
 
-// testCmd represents the test command
+// Implements GET ​/chain​/{chain}​/interlockings
 var chainInterlockingListCmd = &cobra.Command{
 	Use:   "interlocking-list",
 	Short: "List the interlocks registerd in this chain.",
+	Long: `List the interlocks registerd in this chain.
+
+Calls  GET ​/chain​/{chain}​/interlockings
+`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := flags.Flags.RequireChainId(); err != nil {
 			return err
@@ -54,6 +58,9 @@ var chainInterlockingListCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
 
 		var options client.ChainApiChainInterlockingsListOpts
 		options.HowManyFromLast = flags.OptionalInt32(chainInterlockingListCmdFlags.countFromLast)
