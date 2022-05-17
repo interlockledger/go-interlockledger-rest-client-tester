@@ -32,18 +32,45 @@ package docs
 
 import (
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/commands/flags"
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
+	"github.com/interlockledger/go-interlockledger-rest-client/client/models"
 )
 
 // testCmd represents the test command
-var DocsRootCmd = &cobra.Command{
-	Use:   "docs",
-	Short: "Documents APIs.",
+var docsBeginTransactionCmd = &cobra.Command{
+	Use:   "transaction-begin",
+	Short: "Begin a new document transaction.",
+	Long:  "Begin a new document transaction. Use a param file like document-begin-transaction.json to set transaction parameters.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := flags.Flags.RequireParamFile(); err != nil {
+			return err
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		appClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
+
+		// Load the parameters
+
+		var params models.DocumentsBeginTransactionModel
+		err = core.LoadJSONFile(flags.Flags.ParamFile, &params)
+		if err != nil {
+			return err
+		}
+		ret, _, err := appClient.DocumentsApi.DocumentsBeginTransaction(nil, &params)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
 
 func init() {
-	DocsRootCmd.AddCommand(docsGetCmd)
-	DocsRootCmd.AddCommand(docsBeginTransactionCmd)
-	DocsRootCmd.AddCommand(docsAddDocumentCmd)
-	DocsRootCmd.AddCommand(docsCommitTrasactionCmd)
-	DocsRootCmd.AddCommand(docsTransactionInfoCmd)
+	flags.Flags.RegisterParamFileParameter(docsBeginTransactionCmd.Flags())
 }

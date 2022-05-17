@@ -32,18 +32,35 @@ package docs
 
 import (
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
 // testCmd represents the test command
-var DocsRootCmd = &cobra.Command{
-	Use:   "docs",
-	Short: "Documents APIs.",
+var docsTransactionInfoCmd = &cobra.Command{
+	Use:   "transaction-status",
+	Short: "Returns the status of an open transaction.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := docsFlags.RequireTransactionId(); err != nil {
+			return err
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
+		ret, _, err := apiClient.DocumentsApi.DocumentsGetTransactionStatus(nil,
+			docsFlags.TransactionId)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
 
 func init() {
-	DocsRootCmd.AddCommand(docsGetCmd)
-	DocsRootCmd.AddCommand(docsBeginTransactionCmd)
-	DocsRootCmd.AddCommand(docsAddDocumentCmd)
-	DocsRootCmd.AddCommand(docsCommitTrasactionCmd)
-	DocsRootCmd.AddCommand(docsTransactionInfoCmd)
+	docsFlags.RegisterTransactionIDParameter(docsTransactionInfoCmd.Flags())
 }

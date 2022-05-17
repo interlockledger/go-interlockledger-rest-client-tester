@@ -31,19 +31,59 @@
 package docs
 
 import (
+	"bytes"
+	"os"
+	"path"
+
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
+	"github.com/interlockledger/go-interlockledger-rest-client/client"
 )
 
 // testCmd represents the test command
-var DocsRootCmd = &cobra.Command{
-	Use:   "docs",
-	Short: "Documents APIs.",
+var docsAddDocumentCmd = &cobra.Command{
+	Use:   "add-document",
+	Short: "Adds a document to the specified transaction.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := docsFlags.RequireTransactionId(); err != nil {
+			return err
+		}
+		if err := docsFlags.RequireDocument(); err != nil {
+			return err
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
+
+		// Load the parameters
+		name := path.Base(docsFlags.DocumentFile)
+		contents, err := os.ReadFile(docsFlags.DocumentFile)
+		if err != nil {
+			return err
+		}
+		var options client.DocumentsApiDocumentsAddDocumentParams
+		options.Comment = docsFlags.Comment
+		options.Path = docsFlags.Path
+		options.Name = name
+		options.ContentType = docsFlags.ContentType
+		options.Contents = bytes.NewReader(contents)
+		ret, _, err := apiClient.DocumentsApi.DocumentsAddDocument(nil,
+			docsFlags.TransactionId,
+			&options)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		core.PrintAsJSON(ret)
+		return nil
+	},
 }
 
 func init() {
-	DocsRootCmd.AddCommand(docsGetCmd)
-	DocsRootCmd.AddCommand(docsBeginTransactionCmd)
-	DocsRootCmd.AddCommand(docsAddDocumentCmd)
-	DocsRootCmd.AddCommand(docsCommitTrasactionCmd)
-	DocsRootCmd.AddCommand(docsTransactionInfoCmd)
+	docsFlags.RegisterTransactionIDParameter(docsAddDocumentCmd.Flags())
+	docsFlags.RegisterDocumentParameter(docsAddDocumentCmd.Flags())
 }

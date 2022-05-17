@@ -31,19 +31,46 @@
 package docs
 
 import (
-	"github.com/spf13/cobra"
+	"fmt"
+
+	"github.com/spf13/pflag"
 )
 
-// testCmd represents the test command
-var DocsRootCmd = &cobra.Command{
-	Use:   "docs",
-	Short: "Documents APIs.",
+var docsFlags DocsFlags
+
+type DocsFlags struct {
+	TransactionId string
+	DocumentFile  string
+	ContentType   string
+	Path          string
+	Comment       string
 }
 
-func init() {
-	DocsRootCmd.AddCommand(docsGetCmd)
-	DocsRootCmd.AddCommand(docsBeginTransactionCmd)
-	DocsRootCmd.AddCommand(docsAddDocumentCmd)
-	DocsRootCmd.AddCommand(docsCommitTrasactionCmd)
-	DocsRootCmd.AddCommand(docsTransactionInfoCmd)
+func (f *DocsFlags) RequireTransactionId() error {
+	if f.TransactionId == "" {
+		return fmt.Errorf("The transaction id is missing.")
+	} else {
+		return nil
+	}
+}
+
+func (f *DocsFlags) RequireDocument() error {
+	if f.DocumentFile == "" {
+		return fmt.Errorf("The document file is missing.")
+	}
+	if f.ContentType == "" {
+		return fmt.Errorf("The content type is missing.")
+	}
+	return nil
+}
+
+func (f *DocsFlags) RegisterTransactionIDParameter(flagSet *pflag.FlagSet) {
+	flagSet.StringVarP(&docsFlags.TransactionId, "transaction-id", "t", "", "Transaction ID.")
+}
+
+func (f *DocsFlags) RegisterDocumentParameter(flagSet *pflag.FlagSet) {
+	flagSet.StringVarP(&docsFlags.DocumentFile, "document", "d", "", "")
+	flagSet.StringVarP(&docsFlags.ContentType, "content-type", "m", "", "Content-type of the document.")
+	flagSet.StringVar(&docsFlags.Path, "path", "/", "Path of the document.")
+	flagSet.StringVar(&docsFlags.Comment, "comment", "-", "Comment of the document.")
 }

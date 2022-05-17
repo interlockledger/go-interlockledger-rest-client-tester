@@ -1,0 +1,11 @@
+{
+  "chain": "string",
+  "comment": "string",
+  "compression": "string",
+  "encryption": "string",
+  "generatePublicDirectory": true,
+  "iterations": 0,
+  "password": "string",
+  "previous": "string"
+}
+
