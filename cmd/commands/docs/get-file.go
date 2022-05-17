@@ -31,22 +31,62 @@
 package docs
 
 import (
+	"fmt"
+	"io"
+	"os"
+
 	"github.com/spf13/cobra"
+
+	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/core"
 )
 
 // testCmd represents the test command
-var DocsRootCmd = &cobra.Command{
-	Use:   "docs",
-	Short: "Documents APIs.",
+var docsGetFileCmd = &cobra.Command{
+	Use:   "get-file",
+	Short: "Downloads a zip file with all documents pointed by the locator.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if err := docsFlags.RequireLocatorAndIndex(); err != nil {
+			return err
+		}
+		if err := docsFlags.RequireOutput(); err != nil {
+			return err
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		apiClient, err := core.AppCore.NewClient()
+		if err != nil {
+			return err
+		}
+
+		resp, err := apiClient.DocumentsApi.DocumentsGetSingleDocument(nil,
+			docsFlags.Locator, docsFlags.Index)
+		if err != nil {
+			return core.FormatRequestResponseCommandError(err)
+		}
+		defer resp.Body.Close()
+
+		// Open the output file
+		fmt.Printf("Writing the file %s...\n", docsFlags.OutputFile)
+		writer, err := os.OpenFile(docsFlags.OutputFile,
+			os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+		if err != nil {
+			return err
+		}
+		defer writer.Close()
+
+		// Download it...
+		n, err := io.Copy(writer, resp.Body)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("File file with %d bytes written.\n", n)
+		return nil
+	},
 }
 
 func init() {
-	DocsRootCmd.AddCommand(docsGetCmd)
-	DocsRootCmd.AddCommand(docsBeginTransactionCmd)
-	DocsRootCmd.AddCommand(docsAddDocumentCmd)
-	DocsRootCmd.AddCommand(docsCommitTrasactionCmd)
-	DocsRootCmd.AddCommand(docsTransactionInfoCmd)
-	DocsRootCmd.AddCommand(docsGetMetadataCmd)
-	DocsRootCmd.AddCommand(docsZipCmd)
-	DocsRootCmd.AddCommand(docsGetFileCmd)
+	docsFlags.RegisterLocatorParameter(docsGetFileCmd.Flags())
+	docsFlags.RegisterIndexParameter(docsGetFileCmd.Flags())
+	docsFlags.RegisterZipFileParameter(docsGetFileCmd.Flags())
 }

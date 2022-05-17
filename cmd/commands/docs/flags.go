@@ -44,6 +44,9 @@ type DocsFlags struct {
 	ContentType   string
 	Path          string
 	Comment       string
+	Locator       string
+	Index         int32
+	OutputFile    string
 }
 
 func (f *DocsFlags) RequireTransactionId() error {
@@ -64,13 +67,46 @@ func (f *DocsFlags) RequireDocument() error {
 	return nil
 }
 
+func (f *DocsFlags) RequireLocator() error {
+	if f.Locator == "" {
+		return fmt.Errorf("The document locator is missing.")
+	}
+	return nil
+}
+
+func (f *DocsFlags) RequireOutput() error {
+	if f.OutputFile == "" {
+		return fmt.Errorf("The output file is missing.")
+	}
+	return nil
+}
+
+func (f *DocsFlags) RequireLocatorAndIndex() error {
+	if f.Index == -1 {
+		return fmt.Errorf("The document index is missing.")
+	}
+	return nil
+}
+
 func (f *DocsFlags) RegisterTransactionIDParameter(flagSet *pflag.FlagSet) {
 	flagSet.StringVarP(&docsFlags.TransactionId, "transaction-id", "t", "", "Transaction ID.")
 }
 
 func (f *DocsFlags) RegisterDocumentParameter(flagSet *pflag.FlagSet) {
-	flagSet.StringVarP(&docsFlags.DocumentFile, "document", "d", "", "")
+	flagSet.StringVarP(&docsFlags.DocumentFile, "document", "d", "", "The document file.")
 	flagSet.StringVarP(&docsFlags.ContentType, "content-type", "m", "", "Content-type of the document.")
 	flagSet.StringVar(&docsFlags.Path, "path", "/", "Path of the document.")
 	flagSet.StringVar(&docsFlags.Comment, "comment", "-", "Comment of the document.")
+}
+
+func (f *DocsFlags) RegisterLocatorParameter(flagSet *pflag.FlagSet) {
+	flagSet.StringVarP(&docsFlags.Locator, "locator", "l", "", "The document locator.")
+}
+
+func (f *DocsFlags) RegisterIndexParameter(flagSet *pflag.FlagSet) {
+	flagSet.Int32VarP(&docsFlags.Index, "index", "i", -1, "Index of the document.")
+}
+
+func (f *DocsFlags) RegisterZipFileParameter(flagSet *pflag.FlagSet) {
+	flagSet.StringVarP(&docsFlags.OutputFile, "output", "o", "", "The output file.")
 }
