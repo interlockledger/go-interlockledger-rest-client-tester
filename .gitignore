@@ -26,3 +26,5 @@ go.work
 /*.pem
 /config.json
 
+# Executable
+/main
