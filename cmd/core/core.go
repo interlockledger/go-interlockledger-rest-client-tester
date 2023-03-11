@@ -63,10 +63,14 @@ func (c *ApplicationCore) NewClient() (*client.APIClient, error) {
 	configuration := client.NewConfiguration()
 	// Set the name of the server here
 	configuration.BasePath = c.Config.BasePath
-	// Sets the required client certificate.
-	err := configuration.SetClientCertificate(c.Config.CertFile, c.Config.KeyFile)
-	if err != nil {
-		return nil, fmt.Errorf("Unable to load the client certificate: %w\n", err)
+	configuration.NoServerVerification = true
+	configuration.CertFile = c.Config.CertFile
+	configuration.KeyFile = c.Config.KeyFile
+	configuration.PFXFile = c.Config.PFXFile
+	configuration.PFXPassword = c.Config.PFXPassword
+
+	if err := configuration.Init(); err != nil {
+		return nil, fmt.Errorf("unable to load the client certificate: %w", err)
 	}
 	// Create the new client
 	return client.NewAPIClient(configuration), nil

@@ -34,10 +34,13 @@ package core
 
 // Structure of the configuration file used by this program.
 type Configuration struct {
-	Loaded   bool   `json:"-"`
-	BasePath string `json:"basePath"`
-	CertFile string `json:"certFile"`
-	KeyFile  string `json:"keyFile"`
+	Loaded                 bool   `json:"-"`
+	BasePath               string `json:"basePath"`
+	SkipServerVerification bool   `json:"skipServerVerification"`
+	CertFile               string `json:"certFile"`
+	KeyFile                string `json:"keyFile"`
+	PFXFile                string `json:"pfxFile"`
+	PFXPassword            string `json:"pfxPassword"`
 }
 
 // Loads the default values.
