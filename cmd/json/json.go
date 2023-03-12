@@ -61,6 +61,7 @@ func init() {
 
 	JSONRootCmd.PersistentFlags().StringVar(&JSONRootCmdFlags.JSONFile, "json", "", "The JSON file to add. Defaults to \"{\"dummy\": \"DUMMY\"}\"")
 	JSONRootCmd.PersistentFlags().StringVar(&JSONRootCmdFlags.ReaderCertFile, "reader-cert", "", "The certificate file that contains the reader key.")
+	flags.Flags.RegisterChainIdParameter(JSONRootCmd.PersistentFlags())
 }
 
 // Loads the JSON payload. If the parameter is not provided, returns a dummy
@@ -90,8 +91,4 @@ func LoadReaderCertificate(file string) (crypto.ReaderKey, error) {
 		return nil, fmt.Errorf("Unable to extract the public key: %w", err)
 	}
 	return readerKey, nil
-}
-
-func init() {
-	flags.Flags.RegisterChainIdParameter(JSONRootCmd.PersistentFlags())
 }

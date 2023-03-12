@@ -28,49 +28,22 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// This package implements the root command of this application.
-package cmd
+// Implements the node APIs.
+package opaque
 
 import (
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/chain"
 	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/flags"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/json"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/opaque"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/core"
-
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/docs"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/node"
-	"github.com/interlockledger/go-interlockledger-rest-client-tester/cmd/records"
 	"github.com/spf13/cobra"
 )
 
-var (
-	// Used for flags.
-	rootCmd = &cobra.Command{
-		Use:     "IL2 Go REST Client Tester",
-		Short:   "Test program for the IL2 Go REST Client",
-		Long:    "This is a very simple test program to test and show how to use the IL2 Go REST Client.",
-		Version: "0.1.0",
-		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			return core.AppCore.LoadConfig(flags.Flags.ConfigFile)
-		},
-	}
-)
-
-func init() {
-	// Register the API commands
-	rootCmd.AddCommand(chain.ChainRootCmd)
-	rootCmd.AddCommand(json.JSONRootCmd)
-	rootCmd.AddCommand(node.NodeRootCmd)
-	rootCmd.AddCommand(records.RecordRootCmd)
-	rootCmd.AddCommand(docs.DocsRootCmd)
-	rootCmd.AddCommand(opaque.OpaqueRootCmd)
-
-	// Adding the parameters shared by all commands.
-	rootCmd.PersistentFlags().StringVar(&flags.Flags.ConfigFile, "config", "config.json", "The configuration file.")
+// Root command for the node APIs.
+var OpaqueRootCmd = &cobra.Command{
+	Use:   "opaque",
+	Short: "Opaque Record APIs",
 }
 
-// Execute executes the root command.
-func Execute() error {
-	return rootCmd.Execute()
+func init() {
+	OpaqueRootCmd.AddCommand(opaqueAddCmd)
+	OpaqueRootCmd.AddCommand(opaqueGetCmd)
+	flags.Flags.RegisterChainIdParameter(OpaqueRootCmd.PersistentFlags())
 }
