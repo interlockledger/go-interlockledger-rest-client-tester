@@ -45,5 +45,6 @@ var OpaqueRootCmd = &cobra.Command{
 func init() {
 	OpaqueRootCmd.AddCommand(opaqueAddCmd)
 	OpaqueRootCmd.AddCommand(opaqueGetCmd)
+	OpaqueRootCmd.AddCommand(opaqueQueryCmd)
 	flags.Flags.RegisterChainIdParameter(OpaqueRootCmd.PersistentFlags())
 }
