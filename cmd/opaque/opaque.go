@@ -46,5 +46,6 @@ func init() {
 	OpaqueRootCmd.AddCommand(opaqueAddCmd)
 	OpaqueRootCmd.AddCommand(opaqueGetCmd)
 	OpaqueRootCmd.AddCommand(opaqueQueryCmd)
+	OpaqueRootCmd.AddCommand(opaqueQueryJsonCmd)
 	flags.Flags.RegisterChainIdParameter(OpaqueRootCmd.PersistentFlags())
 }
