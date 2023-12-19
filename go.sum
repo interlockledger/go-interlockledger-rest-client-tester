@@ -6,8 +6,11 @@ github.com/inconshreveable/mousetrap v1.0.1 h1:U3uMjPSQEBMNp1lFxmllqCPM6P5u/Xq7P
 github.com/inconshreveable/mousetrap v1.0.1/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/interlockledger/go-iltags v0.1.0 h1:QVLkNq2RTQ2DvktPIhh9u6cmhE9eq7iOUWBMjHN/F38=
 github.com/interlockledger/go-iltags v0.1.0/go.mod h1:wzaZb5damw2OKewJZG9AYR9ifCUhKtRatI+SgTz6/kY=
+github.com/interlockledger/go-iltags v0.2.2/go.mod h1:6GtncVOkwkBM/u+xKnd8Cjypv9nE+oqtfm8lDMm9kng=
 github.com/interlockledger/go-interlockledger-rest-client v0.1.0 h1:HpltiA297jbILAITBKjUD3Vjgw8krGq6njnH8Pca6E4=
 github.com/interlockledger/go-interlockledger-rest-client v0.1.0/go.mod h1:83VU4zn6bGmfgc2ymqZXRz/55sBccWMoSmb1m+BrTao=
+github.com/interlockledger/go-interlockledger-rest-client v0.2.1 h1:WOcBziMovbaXTQUEVnu2beyjck5YYE8+dYtffPTykRM=
+github.com/interlockledger/go-interlockledger-rest-client v0.2.1/go.mod h1:I743v7BSe7Y6b2Vb3WZXOLiqJxU35rBBuDO8lxEeB0k=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/spf13/cobra v1.6.1 h1:o94oiPyS4KD1mPy2fmcYYHHfCxLqYjJOhGsCHFZtEzA=

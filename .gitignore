@@ -30,3 +30,6 @@ go.work
 /main
 
 /*.pfx
+
+/go-interlockledger-rest-client-tester
+/go-interlockledger-rest-client-tester.*
